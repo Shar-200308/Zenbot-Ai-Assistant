@@ -1,0 +1,48 @@
+/*
+ * Outfit Font — Self-hosted (Disadvantage #1 fix)
+ * Source: Google Fonts v15  |  Weights: 300, 400, 500, 600, 700
+ * Files: chatbot/static/fonts/Outfit-*.ttf
+ *
+ * Previously loaded from: https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700
+ * Now fully self-hosted — works offline and behind firewalls.
+ */
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('Outfit-300.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('Outfit-400.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('Outfit-500.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('Outfit-600.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('Outfit-700.ttf') format('truetype');
+}

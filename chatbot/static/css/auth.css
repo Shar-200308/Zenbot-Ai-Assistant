@@ -1,0 +1,114 @@
+/* ================= RESET ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* ================= BODY ================= */
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ================= AUTH CONTAINER ================= */
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* ================= TITLE ================= */
+.auth-container h2 {
+    margin-bottom: 25px;
+    color: #1e293b;
+}
+
+/* ================= INPUTS ================= */
+.auth-container input {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-size: 15px;
+    transition: border 0.3s, box-shadow 0.3s;
+}
+
+.auth-container input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+    outline: none;
+}
+
+/* ================= BUTTON ================= */
+.auth-container button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.auth-container button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* ================= SWITCH TEXT ================= */
+.auth-container .switch {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #475569;
+}
+
+.auth-container .switch a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-container .switch a:hover {
+    text-decoration: underline;
+}
+
+/* ================= MESSAGE ================= */
+#msg {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #dc2626;
+}
+
+/* ================= ANIMATION ================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 25px 20px;
+    }
+}
+

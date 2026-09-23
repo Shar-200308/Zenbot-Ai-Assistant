@@ -1,0 +1,3897 @@
+1
+
+Q: hi
+A: Hello! Welcome to Zensar Company chatbot. How can I help you today?
+
+2
+
+Q: hello
+A: Hi there! I’m your Zensar virtual assistant.
+
+3
+
+Q: hey
+A: Hey! Welcome to Zensar technologies.
+
+4
+
+Q: good morning
+A: Good morning! How can I assist you?
+
+5
+
+Q: good evening
+A: Good evening! How may I help you?
+
+6
+
+Q: company name
+A: Our company name is Zensar technologies Pvt Ltd.
+
+7
+
+Q: full form of company
+A: Zensar stands for Software Zenith Excellence.
+
+8
+
+Q: about Zensar
+A: Zensar is an IT services and AI solutions company.
+
+9
+
+Q: when started
+A: Zensar was established in 2000.
+
+10
+
+Q: headquarters
+A: Our headquarters is in Pune,Maharashtra, India.
+
+11
+
+Q: branch locations
+A: Pune (Kharadi and Baner), Bengaluru (Electronic City and Sarjapur Outer Ring Road), Mumbai (Ballard Estate), Hyderabad, Secunderabad, Nagpur, and Gurgaon
+
+12
+
+Q: office timing
+A: Monday to Friday, 9 AM – 6 PM IST.
+
+13
+
+Q: weekend working
+A: Weekends are generally off except special projects.
+
+14
+
+Q: company type
+A: Private Limited IT Company.
+
+15
+
+Q: industry
+A: Information Technology & Software Services.
+
+16
+
+Q: core services
+A: Web, Mobile, AI, and Cloud solutions.
+
+17
+
+Q: ai services
+A: Machine Learning, NLP, and Chatbot development.
+
+18
+
+Q: mobile services
+A: Android and iOS application development.
+
+19
+
+Q: web technologies
+A: React, Angular, Django, Node.js.
+
+20
+
+Q: backend technologies
+A: Python, Java, Node.js
+
+21
+
+Q: frontend technologies
+A: React, HTML5, CSS3, JavaScript.
+
+22
+
+Q: database systems
+A: MySQL, PostgreSQL, MongoDB.
+
+23
+
+Q: cloud platforms
+A: AWS, Azure, Google Cloud.
+
+24
+
+Q: devops tools
+A: Docker, Jenkins, CI/CD.
+
+25
+
+Q: company mission
+A: Deliver scalable and innovative digital solutions.
+
+26
+
+Q: company vision
+A: Become a global technology leader.
+
+27
+
+Q: company values
+A: Innovation, Integrity, Excellence.
+
+28
+
+Q: ceo name
+A: Mr. Manish Tandon.
+
+29
+
+Q: founder
+A: Founded by Dr.Ganesh Natarajan.
+
+30
+
+Q: employee strength
+A: 10000+ employees.
+
+31
+
+Q: hire freshers
+A: Yes, freshers are welcome.
+
+32
+
+Q: experienced hiring
+A: Yes, experienced professionals are hired.
+
+33
+
+Q: internship duration
+A: 3 to 6 months.
+
+34
+
+Q: internship stipend
+A: Performance-based stipend provided.
+
+35
+
+Q: internship certificate
+A: Yes, certificate is provided.
+
+36
+
+Q: internship eligibility
+A: Final year students or graduates.
+
+37
+
+Q: internship mode
+A: Onsite and remote available.
+
+38
+
+Q: apply internship
+A: Send resume to internship@Zensar.com
+
+39
+
+Q: recruitment process
+A: 3 round Test → Technical → HR.
+
+40
+
+Q: interview mode
+A: offline.
+
+41
+
+Q: fresher salary
+A: ₹3–4.5 LPA.
+
+42
+
+Q: senior salary
+A: ₹6–15 LPA based on role.
+
+43
+
+Q: remote jobs available
+A: Yes, remote roles available.
+
+44
+
+Q: hybrid work
+A: Hybrid work model available.
+
+45
+
+Q: probation duration
+A: 6 months.
+
+46
+
+Q: notice period duration
+A: 60 days.
+
+47
+
+Q: health benefits
+A: Health insurance provided.
+
+48
+
+Q: annual bonus
+A: Performance-based annual bonus.
+
+49
+
+Q: leave structure
+A: 20 annual + 10 casual leaves.
+
+50
+
+Q: working culture
+A: Collaborative and growth-focused.
+
+51
+
+Q: dress policy
+A: Smart casual.
+
+52
+
+Q: friday dress code
+A: Casual Fridays.
+
+53
+
+Q: background verification
+A: Mandatory verification process.
+
+54
+
+Q: campus drive
+A: Yes, campus placements conducted.
+
+55
+
+Q: freelance roles
+A: Short-term freelance roles available.
+
+56
+
+Q: nda policy
+A: NDAs signed with clients.
+
+57
+
+Q: data security
+A: Strict data protection policies.
+
+58
+
+Q: qa team
+A: Dedicated QA team available.
+
+59
+
+Q: agile methodology
+A: Scrum-based Agile process.
+
+60
+
+Q: code standards
+A: Industry coding standards followed.
+
+61
+
+Q: learning support
+A: Certification reimbursement provided.
+
+62
+
+Q: mentor support
+A: Dedicated mentor for interns.
+
+63
+
+Q: ppo offer
+A: High performers may receive PPO.
+
+64
+
+Q: hackathon events
+A: Conducted twice a year.
+
+65
+
+Q: hr contact
+A: hr@Zensar.com
+
+66
+
+Q: support contact
+A: support@Zensar.com
+
+67
+
+Q: career mail
+A: careers@Zensar.com
+
+68
+
+Q: official website
+A: https://www.zensar.com/
+
+69
+
+Q: relocation assistance
+A: Provided for full-time roles.
+
+70
+
+Q: night shift policy
+A: Only for global support projects.
+
+71
+
+Q: project types
+A: Web, Mobile, AI, Enterprise apps.
+
+72
+
+Q: startup packages
+A: Startup-friendly pricing models.
+
+73
+
+Q: mvp support
+A: Yes, MVP development provided.
+
+74
+
+Q: crm development
+A: Custom CRM systems built.
+
+75
+
+Q: erp systems
+A: Enterprise ERP solutions delivered.
+
+76
+
+Q: chatbot services
+A: AI chatbot development available.
+
+77
+
+Q: api services
+A: Third-party API integration provided.
+
+78
+
+Q: hosting support
+A: Cloud hosting assistance available.
+
+79
+
+Q: maintenance plans
+A: Ongoing support & maintenance.
+
+80
+
+Q: documentation support
+A: Complete technical documentation.
+
+81
+
+Q: performance review cycle
+A: Conducted annually.
+
+82
+
+Q: promotion policy
+A: Based on performance.
+
+83
+
+Q: referral program
+A: Employee referral bonus available.
+
+84
+
+Q: innovation support
+A: New ideas are encouraged.
+
+85
+
+Q: csr initiatives
+A: Active CSR programs conducted.
+
+86
+
+Q: annual events
+A: Tech fests and annual meetups.
+
+87
+
+Q: open source work
+A: Developers contribute to open source.
+
+88
+
+Q: training programs
+A: Internal technical training available.
+
+89
+
+Q: certification help
+A: Company sponsors certifications.
+
+90
+
+Q: grievance support
+A: HR directly handles concerns.
+
+91
+
+Q: parking facility
+A: Secure parking available.
+
+92
+
+Q: on-site projects
+A: Selected employees get onsite roles.
+
+93
+
+Q: global clients
+A: USA, UK, UAE, Australia.
+
+94
+
+Q: app testing
+A: Manual and automated testing done.
+
+95
+
+Q: cybersecurity services
+A: Security audits and secure coding.
+
+96
+
+Q: project delivery time
+A: Depends on project scope.
+
+97
+
+Q: custom software
+A: Fully customized software solutions.
+
+98
+
+Q: consulting service
+A: IT consulting provided.
+
+99
+
+Q: digital marketing
+A: SEO and digital marketing services.
+
+100
+
+Q: ui ux services
+A: Professional UI/UX design team.
+
+
+101
+
+Q: fresher eligibility
+A: Any graduate with technical skills.
+
+102
+
+Q: diploma eligibility
+A: Diploma holders can apply.
+
+103
+
+Q: student internship
+A: Students can apply for internships.
+
+104
+
+Q: walk in details
+A: Announced via social media.
+
+105
+
+Q: interview rounds detail
+A: Aptitude → Technical → HR.
+
+106
+
+Q: interview preparation tips
+A: Practice coding and review projects.
+
+107
+
+Q: job application status
+A: Contact HR via email.
+
+108
+
+Q: linkedin presence
+A: Active on LinkedIn.
+
+109
+
+Q: social media
+A: Facebook, Instagram, LinkedIn.
+
+110
+
+Q: contact number
+A: Available on official website.
+
+
+111
+
+Q: fresher training period
+A: Initial training provided.
+
+112
+
+Q: internal promotions
+A: Encouraged for deserving employees.
+
+113
+
+Q: client projects
+A: Domestic and international projects.
+
+114
+
+Q: support team
+A: 24/7 support for global clients.
+
+115
+
+Q: company growth rate
+A: Growing steadily year by year.
+
+116
+
+Q: appraisal cycle
+A: Once per year.
+
+117
+
+Q: teamwork culture
+A: Strong collaboration culture.
+
+118
+
+Q: flexible timing
+A: Flexible for some roles.
+
+119
+
+Q: part time job
+A: Limited part-time roles available.
+
+120
+
+Q: internship conversion
+A: Interns may convert to full-time.
+
+121
+
+Q: senior developer role
+A: 3+ years experience required.
+
+122
+
+Q: junior developer role
+A: 0–2 years experience.
+
+123
+
+Q: cloud certification
+A: AWS/Azure certification preferred.
+
+124
+
+Q: python requirement
+A: Django & REST knowledge required.
+
+125
+
+Q: java requirement
+A: Spring Boot preferred.
+
+126
+
+Q: react requirement
+A: Strong JS fundamentals required.
+
+127
+
+Q: project manager role
+A: Agile project handling experience.
+
+128
+
+Q: hr department
+A: Dedicated HR team available.
+
+129
+
+Q: finance team
+A: Experienced finance department.
+
+130
+
+Q: admin support
+A: Full administrative support.
+
+131
+
+Q: remote internship
+A: Yes, remote internship available.
+
+132
+
+Q: onsite internship
+A: Yes, available in Chennai office.
+
+133
+
+Q: company registration
+A: Registered private limited company.
+
+134
+
+Q: gst number
+A: Available upon request.
+
+135
+
+Q: client confidentiality
+A: Strict confidentiality maintained.
+
+136
+
+Q: startup hiring
+A: Yes, startup projects hiring.
+
+137
+
+Q: coding standards followed
+A: Clean code and best practices.
+
+138
+
+Q: security compliance
+A: Industry security compliance followed.
+
+139
+
+Q: employee engagement
+A: Regular team activities conducted.
+
+140
+
+Q: career growth
+A: Fast-track career growth available.
+
+141
+
+Q: job portal presence
+A: Listed on major job portals.
+
+142
+
+Q: resume format
+A: PDF format preferred.
+
+143
+
+Q: fresher interview focus
+A: Basics and project explanation.
+
+144
+
+Q: experienced interview focus
+A: Practical and scenario-based.
+
+145  Q: referral hiring A: Yes, referral hiring supported.
+
+146 Q:holiday list A: Shared annually.
+
+147
+
+Q: company expansion
+A: Expanding globally.
+
+148
+
+Q: client industries
+A: Healthcare, Finance, Retail, Education.
+
+149
+
+Q: automation testing
+A: Selenium and automation tools used.
+
+150
+
+Q: software lifecycle
+A: Full SDLC followed.
+
+151
+
+Q: software company
+A: Yes, Zensar Technology is a software development company.
+
+152
+
+Q: it company
+A: Yes, we are an IT services company.
+
+153
+
+Q: product based or service based
+A: Primarily service-based with custom product solutions.
+
+154
+
+Q: b2b services
+A: Yes, we provide B2B technology solutions.
+
+155
+
+Q: b2c services
+A: Limited B2C digital solutions available.
+
+156
+
+Q: client support hours
+A: 24/7 support for enterprise clients.
+
+157
+
+Q: project quotation
+A: Quotation depends on project requirements.
+
+158
+
+Q: free consultation
+A: Yes, initial consultation is free.
+
+159
+
+Q: proposal timeline
+A: Proposal shared within 2–3 business days.
+
+160
+
+Q: payment terms
+A: Milestone-based payment structure.
+
+161
+
+Q: advance payment
+A: Initial advance required before project start.
+
+162
+
+Q: invoice process
+A: Invoices generated per milestone completion.
+
+163
+
+Q: refund policy
+A: Based on project agreement terms.
+
+164
+
+Q: contract duration
+A: Depends on project scope.
+
+165
+
+Q: legal agreement
+A: Formal agreement signed before project start.
+
+166
+
+Q: support duration
+A: Post-deployment support available.
+
+167
+
+Q: bug fixing policy
+A: Free bug fixes during warranty period.
+
+168
+
+Q: warranty period
+A: Typically 3 months post delivery.
+
+169
+
+Q: version upgrade
+A: Upgrade services available.
+
+170
+
+Q: scalability support
+A: Applications built for scalability.
+
+171
+
+Q: microservices architecture
+A: Yes, we develop microservices-based apps.
+
+172
+
+Q: rest api
+A: RESTful APIs developed for integration.
+
+173
+
+Q: graphql support
+A: GraphQL integration available.
+
+174
+
+Q: payment gateway
+A: Razorpay, Stripe, PayPal integration.
+
+175
+
+Q: sms integration
+A: SMS gateway APIs integrated.
+
+176
+
+Q: email integration
+A: SMTP and third-party email services integrated.
+
+177
+
+Q: third party integration
+A: Yes, CRM, ERP, and other APIs integrated.
+
+178
+
+Q: ecommerce development
+A: Custom eCommerce platforms developed.
+
+179
+
+Q: wordpress service
+A: WordPress development supported.
+
+180
+
+Q: shopify support
+A: Shopify store setup available.
+
+181
+
+Q: blockchain projects
+A: Blockchain solutions available on request.
+
+182
+
+Q: iot development
+A: IoT application development supported.
+
+183
+
+Q: data analytics
+A: Data analytics and reporting solutions provided.
+
+184
+
+Q: business intelligence
+A: BI dashboards developed.
+
+185
+
+Q: automation solutions
+A: Workflow automation services offered.
+
+186
+
+Q: robotic process automation
+A: RPA solutions available.
+
+187
+
+Q: custom dashboard
+A: Interactive dashboards developed.
+
+188
+
+Q: admin panel
+A: Secure admin panels provided.
+
+189
+
+Q: user authentication
+A: JWT and OAuth authentication implemented.
+
+190
+
+Q: role based access
+A: Role-based access control enabled.
+
+191
+
+Q: ssl security
+A: SSL encryption enforced.
+
+192
+
+Q: data backup
+A: Automated backup systems implemented.
+
+193
+
+Q: disaster recovery
+A: Disaster recovery plans available.
+
+194
+
+Q: server monitoring
+A: Real-time server monitoring enabled.
+
+195
+
+Q: load balancing
+A: Load balancing configured for scalability.
+
+196
+
+Q: containerization
+A: Docker containerization supported.
+
+197
+
+Q: kubernetes support
+A: Kubernetes deployment available.
+
+198
+
+Q: ci cd pipeline
+A: Automated CI/CD pipelines configured.
+
+199
+
+Q: git usage
+A: Git-based version control used.
+
+200
+
+Q: repository hosting
+A: GitHub, GitLab, Bitbucket supported.
+
+201
+
+Q: code deployment
+A: Automated deployment process used.
+
+202
+
+Q: staging environment
+A: Separate staging environment provided.
+
+203
+
+Q: production support
+A: Production monitoring and support available.
+
+204
+
+Q: performance optimization
+A: Application performance optimized.
+
+205
+
+Q: seo optimization
+A: Basic SEO setup included.
+
+206
+
+Q: responsive design
+A: Fully responsive UI ensured.
+
+207
+
+Q: cross browser support
+A: Compatible across major browsers.
+
+208
+
+Q: mobile friendly
+A: Mobile-first design approach.
+
+209
+
+Q: pwa development
+A: Progressive Web Apps developed.
+
+210
+
+Q: app publishing
+A: Assistance in Play Store & App Store publishing.
+
+211
+
+Q: android native
+A: Native Android apps developed.
+
+212
+
+Q: ios native
+A: Native iOS apps developed.
+
+213
+
+Q: flutter development
+A: Flutter cross-platform apps built.
+
+214
+
+Q: react native
+A: React Native apps supported.
+
+215
+
+Q: custom api
+A: Custom API solutions created.
+
+216
+
+Q: database migration
+A: Database migration services provided.
+
+217
+
+Q: legacy system upgrade
+A: Legacy modernization supported.
+
+218
+
+Q: software audit
+A: Code and security audits conducted.
+
+219
+
+Q: performance testing
+A: Load and stress testing done.
+
+220
+
+Q: automation scripts
+A: Automation scripts developed.
+
+221
+
+Q: internal tools
+A: Custom internal tools developed.
+
+222
+
+Q: hr software
+A: HR management systems built.
+
+223
+
+Q: payroll system
+A: Payroll automation solutions available.
+
+224
+
+Q: attendance system
+A: Biometric and digital attendance systems.
+
+225
+
+Q: crm customization
+A: CRM customization supported.
+
+226
+
+Q: erp customization
+A: ERP customization services available.
+
+227
+
+Q: ticketing system
+A: Helpdesk ticketing systems built.
+
+228
+
+Q: inventory management
+A: Inventory management software developed.
+
+229
+
+Q: hospital management
+A: Healthcare management systems provided.
+
+230
+
+Q: school management
+A: School ERP solutions delivered.
+
+231
+
+Q: fintech solutions
+A: Secure fintech applications developed.
+
+232
+
+Q: healthcare solutions
+A: Healthcare IT solutions provided.
+
+233
+
+Q: retail solutions
+A: Retail software platforms built.
+
+234
+
+Q: logistics software
+A: Logistics tracking systems developed.
+
+235
+
+Q: ai chatbot integration
+A: AI chatbot integration supported.
+
+236
+
+Q: voice bot development
+A: Voice assistant solutions available.
+
+237
+
+Q: nlp services
+A: NLP-based solutions developed.
+
+238
+
+Q: computer vision
+A: Computer vision models implemented.
+
+239
+
+Q: predictive analytics
+A: Predictive modeling services offered.
+
+240
+
+Q: big data solutions
+A: Big data processing supported.
+
+241
+
+Q: internship domains
+A: Web, AI, Mobile, Cloud domains.
+
+242
+
+Q: internship selection criteria
+A: Based on technical assessment.
+
+243
+
+Q: internship interview
+A: Technical discussion with mentor.
+
+244
+
+Q: internship confirmation
+A: Offer letter shared via email.
+
+245
+
+Q: internship extension
+A: Extension possible based on performance.
+
+246
+
+Q: intern tasks
+A: Real-time project tasks assigned.
+
+247
+
+Q: intern evaluation
+A: Evaluated on project contribution.
+
+248
+
+Q: intern working hours
+A: Flexible working hours.
+
+249
+
+Q: internship reporting
+A: Daily task reporting required.
+
+250
+
+Q: internship project type
+A: Live client or internal projects.
+
+251
+
+Q: full time offer
+A: Based on performance and openings.
+
+252
+
+Q: joining letter
+A: Shared after selection.
+
+253
+
+Q: offer validity
+A: Valid for specified time period.
+
+254
+
+Q: document submission
+A: Educational and ID proof required.
+
+255
+
+Q: onboarding process
+A: HR orientation and system setup.
+
+256
+
+Q: system provided
+A: Laptop provided for onsite roles.
+
+257
+
+Q: remote system policy
+A: BYOD allowed for remote roles.
+
+258
+
+Q: appraisal percentage
+A: Based on annual review.
+
+259
+
+Q: salary revision
+A: Reviewed yearly.
+
+260
+
+Q: promotion timeline
+A: Based on performance cycle.
+
+261
+
+Q: team size
+A: Teams vary by project.
+
+262
+
+Q: project duration
+A: Depends on scope and complexity.
+
+263
+
+Q: sprint duration
+A: 2-week sprint cycle.
+
+264
+
+Q: daily standup
+A: Daily standup meetings conducted.
+
+265
+
+Q: project tools
+A: Jira, Trello, Slack used.
+
+266
+
+Q: communication tools
+A: Zoom, Google Meet, Slack.
+
+267
+
+Q: reporting manager
+A: Assigned per project.
+
+268
+
+Q: client meeting frequency
+A: Weekly or bi-weekly meetings.
+
+269
+
+Q: performance metrics
+A: KPI-based evaluation.
+
+270
+
+Q: timesheet submission
+A: Weekly timesheet submission required.
+
+271
+
+Q: resignation process
+A: Submit resignation email to HR.
+
+272
+
+Q: exit interview
+A: Conducted before final settlement.
+
+273
+
+Q: experience letter
+A: Issued after completion.
+
+274
+
+Q: relieving letter
+A: Provided post notice period.
+
+275
+
+Q: final settlement
+A: Processed within 30 days.
+
+276
+
+Q: alumni network
+A: Alumni community maintained.
+
+277
+
+Q: rehire policy
+A: Eligible former employees may reapply.
+
+278
+
+Q: grievance escalation
+A: Escalate to HR head if needed.
+
+279
+
+Q: ethics policy
+A: Strict professional ethics followed.
+
+280
+
+Q: anti harassment policy
+A: Zero tolerance policy.
+
+281
+
+Q: diversity policy
+A: Equal opportunity employer.
+
+282
+
+Q: equal employment
+A: Fair hiring practices ensured.
+
+283
+
+Q: internship stipend payment
+A: Paid monthly.
+
+284
+
+Q: overtime policy
+A: Compensatory off provided.
+
+285
+
+Q: flexible leave
+A: Flexible leave options available.
+
+286
+
+Q: maternity leave
+A: As per company policy.
+
+287
+
+Q: paternity leave
+A: Provided as per policy.
+
+288
+
+Q: holiday calendar
+A: Shared at beginning of year.
+
+289
+
+Q: medical leave
+A: Available with approval.
+
+290
+
+Q: emergency leave
+A: Granted based on situation.
+
+291
+
+Q: learning platform
+A: Access to internal LMS provided.
+
+292
+
+Q: tech seminars
+A: Regular tech sessions conducted.
+
+293
+
+Q: knowledge sharing
+A: Weekly knowledge sharing meetings.
+
+294
+
+Q: innovation lab
+A: Internal innovation initiatives supported.
+
+295
+
+Q: idea submission
+A: Employees can submit ideas anytime.
+
+296
+
+Q: patent support
+A: Patent filing support available.
+
+297
+
+Q: company awards
+A: Employee recognition awards given.
+
+298
+
+Q: best performer award
+A: Awarded annually.
+
+299
+
+Q: team outing
+A: Annual team outings conducted.
+
+300
+
+Q: company anniversary
+A: Celebrated every year.
+
+301
+
+Q: company registration type
+A: Registered as Private Limited.
+
+302
+
+Q: incorporation year
+A: Incorporated in 2015.
+
+303
+
+Q: pan details
+A: Shared upon official request.
+
+304
+
+Q: vendor registration
+A: Vendor registration supported.
+
+305
+
+Q: partnership model
+A: Strategic partnerships welcomed.
+
+306
+
+Q: reseller program
+A: Reseller opportunities available.
+
+307
+
+Q: white label services
+A: White-label development supported.
+
+308
+
+Q: outsourcing services
+A: End-to-end outsourcing provided.
+
+309
+
+Q: offshore development
+A: Offshore development center available.
+
+310
+
+Q: onsite development
+A: Onsite development team deployment available.
+
+311
+
+Q: dedicated team model
+A: Dedicated resource hiring available.
+
+312
+
+Q: fixed cost project
+A: Fixed cost pricing available.
+
+313
+
+Q: hourly billing
+A: Hourly engagement model supported.
+
+314
+
+Q: retainer model
+A: Monthly retainer plans available.
+
+315
+
+Q: startup incubation
+A: Startup tech incubation supported.
+
+316
+
+Q: product prototyping
+A: Rapid prototyping services provided.
+
+317
+
+Q: wireframe design
+A: UI wireframes created before development.
+
+318
+
+Q: ui mockup tools
+A: Figma and Adobe XD used.
+
+319
+
+Q: branding services
+A: Logo and branding solutions offered.
+
+320
+
+Q: graphic design
+A: Creative graphic design services available.
+
+321
+
+Q: content management system
+A: Custom CMS solutions developed.
+
+322
+
+Q: headless cms
+A: Headless CMS integration supported.
+
+323
+
+Q: multilingual website
+A: Multi-language support available.
+
+324
+
+Q: accessibility compliance
+A: Accessibility standards followed.
+
+325
+
+Q: hosting migration
+A: Hosting migration assistance provided.
+
+326
+
+Q: domain registration help
+A: Domain purchase guidance offered.
+
+327
+
+Q: ssl installation
+A: SSL setup and renewal supported.
+
+328
+
+Q: server setup
+A: Cloud server configuration available.
+
+329
+
+Q: vps hosting
+A: VPS hosting assistance provided.
+
+330
+
+Q: shared hosting
+A: Shared hosting guidance available.
+
+331
+
+Q: cloud cost optimization
+A: Cloud cost optimization strategies implemented.
+
+332
+
+Q: serverless architecture
+A: Serverless deployment supported.
+
+333
+
+Q: api security
+A: API authentication and encryption ensured.
+
+334
+
+Q: penetration testing
+A: Security penetration testing available.
+
+335
+
+Q: vulnerability scan
+A: Regular vulnerability assessments conducted.
+
+336
+
+Q: code refactoring
+A: Code optimization and refactoring supported.
+
+337
+
+Q: ui redesign
+A: Existing UI redesign services offered.
+
+338
+
+Q: website revamp
+A: Website modernization solutions provided.
+
+339
+
+Q: performance tuning
+A: Backend and database tuning done.
+
+340
+
+Q: scalability planning
+A: Architecture planned for scaling.
+
+341
+
+Q: multilingual app
+A: Apps built with multi-language support.
+
+342
+
+Q: push notification
+A: Push notification integration available.
+
+343
+
+Q: real time chat
+A: Real-time chat feature implemented.
+
+344
+
+Q: live streaming feature
+A: Live streaming integration supported.
+
+345
+
+Q: payment subscription
+A: Subscription-based payment models supported.
+
+346
+
+Q: recurring billing
+A: Recurring billing systems integrated.
+
+347
+
+Q: sms otp integration
+A: OTP-based authentication implemented.
+
+348
+
+Q: email verification
+A: Email verification workflow included.
+
+349
+
+Q: social login
+A: Google and Facebook login supported.
+
+350
+
+Q: biometric authentication
+A: Biometric login supported in apps.
+
+351
+
+Q: geolocation feature
+A: GPS tracking integrated if required.
+
+352
+
+Q: map integration
+A: Google Maps integration available.
+
+353
+
+Q: analytics integration
+A: Google Analytics setup provided.
+
+354
+
+Q: firebase integration
+A: Firebase services integrated.
+
+355
+
+Q: aws deployment
+A: AWS cloud deployment supported.
+
+356
+
+Q: azure deployment
+A: Azure deployment available.
+
+357
+
+Q: gcp deployment
+A: Google Cloud deployment supported.
+
+358
+
+Q: ssl renewal
+A: SSL renewal reminders provided.
+
+359
+
+Q: system monitoring tools
+A: Monitoring via cloud dashboards.
+
+360
+
+Q: server uptime guarantee
+A: High uptime infrastructure ensured.
+
+361
+
+Q: database optimization
+A: Indexing and query optimization done.
+
+362
+
+Q: sql support
+A: SQL database management supported.
+
+363
+
+Q: nosql support
+A: NoSQL solutions available.
+
+364
+
+Q: api documentation
+A: Swagger-based API documentation provided.
+
+365
+
+Q: technical documentation format
+A: Delivered in PDF and online docs.
+
+366
+
+Q: training session
+A: Client training sessions conducted.
+
+367
+
+Q: user manual
+A: Detailed user manuals provided.
+
+368
+
+Q: admin training
+A: Admin panel training offered.
+
+369
+
+Q: client communication mode
+A: Email and video calls preferred.
+
+370
+
+Q: project kickoff meeting
+A: Conducted before development begins.
+
+371
+
+Q: change request process
+A: Formal CR process followed.
+
+372
+
+Q: additional feature cost
+A: Based on new scope discussion.
+
+373
+
+Q: sprint demo
+A: Sprint demo shared bi-weekly.
+
+374
+
+Q: qa reporting
+A: QA reports shared after testing.
+
+375
+
+Q: bug tracking tool
+A: Jira used for bug tracking.
+
+376
+
+Q: version control policy
+A: Strict Git branching strategy followed.
+
+377
+
+Q: repository access
+A: Shared with client upon agreement.
+
+378
+
+Q: nda agreement duration
+A: Valid as per contract.
+
+379
+
+Q: intellectual property rights
+A: IP transferred after full payment.
+
+380
+
+Q: source code ownership
+A: Client owns source code after closure.
+
+381
+
+Q: third party license
+A: Client responsible for premium licenses.
+
+382
+
+Q: open source license
+A: Open-source licenses respected.
+
+383
+
+Q: domain transfer
+A: Domain transfer supported.
+
+384
+
+Q: hosting transfer
+A: Hosting migration assistance provided.
+
+385
+
+Q: support renewal
+A: Annual support renewal available.
+
+386
+
+Q: extended warranty
+A: Extended maintenance plans available.
+
+387
+
+Q: live project demo
+A: Demo shared before final deployment.
+
+388
+
+Q: beta testing
+A: Beta version released for testing.
+
+389
+
+Q: alpha release
+A: Internal alpha testing done.
+
+390
+
+Q: final delivery
+A: Delivered after approval.
+
+391
+
+Q: project documentation language
+A: English documentation provided.
+
+392
+
+Q: timezone support
+A: Support across multiple time zones.
+
+393
+
+Q: global collaboration
+A: International client coordination supported.
+
+394
+
+Q: multilingual support team
+A: English-speaking support team available.
+
+395
+
+Q: escalation matrix
+A: Defined escalation hierarchy maintained.
+
+396
+
+Q: client feedback process
+A: Feedback collected after delivery.
+
+397
+
+Q: satisfaction survey
+A: Client satisfaction surveys conducted.
+
+398
+
+Q: project closure report
+A: Closure documentation shared.
+
+399
+
+Q: milestone review
+A: Review done at every milestone.
+
+400
+
+Q: backlog management
+A: Managed through Agile boards.
+
+
+401
+
+Q: requirement gathering
+A: Detailed requirement analysis conducted.
+
+402
+
+Q: feasibility study
+A: Technical feasibility evaluated.
+
+403
+
+Q: risk assessment
+A: Risk analysis performed before start.
+
+404
+
+Q: sprint planning
+A: Sprint planning meetings conducted.
+
+405
+
+Q: sprint retrospective
+A: Retrospective held after each sprint.
+
+406
+
+Q: team lead role
+A: Oversees development activities.
+
+407
+
+Q: solution architect
+A: Designs overall system architecture.
+
+408
+
+Q: technical support engineer
+A: Handles client technical queries.
+
+409
+
+Q: business analyst role
+A: Gathers and documents requirements.
+
+410
+
+Q: qa engineer role
+A: Ensures product quality.
+
+411
+
+Q: frontend developer role
+A: Develops UI components.
+
+412
+
+Q: backend developer role
+A: Develops APIs and logic.
+
+413
+
+Q: full stack developer role
+A: Handles frontend and backend.
+
+414
+
+Q: devops engineer role
+A: Manages deployment pipelines.
+
+415
+
+Q: ui ux designer role
+A: Designs user experiences.
+
+416
+
+Q: product owner role
+A: Defines product vision.
+
+417
+
+Q: scrum master role
+A: Facilitates Agile process.
+
+418
+
+Q: hr executive role
+A: Manages recruitment and policies.
+
+419
+
+Q: finance executive role
+A: Handles accounts and billing.
+
+420
+
+Q: admin executive role
+A: Manages office operations.
+
+421
+
+Q: fresher onboarding training
+A: Includes technical bootcamp.
+
+422
+
+Q: mentorship duration
+A: Assigned during probation.
+
+423
+
+Q: learning roadmap
+A: Structured technical roadmap provided.
+
+424
+
+Q: certification exam support
+A: Exam fee reimbursement offered.
+
+425
+
+Q: hackathon participation
+A: Employees encouraged to participate.
+
+426
+
+Q: innovation reward
+A: Rewards for innovative ideas.
+
+427
+
+Q: knowledge base access
+A: Internal wiki access provided.
+
+428
+
+Q: internal communication policy
+A: Transparent communication encouraged.
+
+429
+
+Q: attendance tracking
+A: Digital attendance system used.
+
+430
+
+Q: payroll processing
+A: Monthly automated payroll system.
+
+431
+
+Q: bank transfer salary
+A: Salary credited via bank transfer.
+
+432
+
+Q: salary slip
+A: Digital payslips provided.
+
+433
+
+Q: tax deduction
+A: TDS deducted as per law.
+
+434
+
+Q: pf contribution
+A: PF provided as per eligibility.
+
+435
+
+Q: esi benefit
+A: ESI provided if applicable.
+
+436
+
+Q: travel allowance
+A: Travel reimbursements available.
+
+437
+
+Q: internet allowance
+A: Provided for remote employees.
+
+438
+
+Q: laptop policy
+A: Company laptop for onsite roles.
+
+439
+
+Q: system upgrade policy
+A: System upgrades approved as needed.
+
+440
+
+Q: internal transfer
+A: Department transfer possible.
+
+441
+
+Q: role change request
+A: Allowed based on skills.
+
+442
+
+Q: promotion eligibility
+A: Based on annual appraisal.
+
+443
+
+Q: leadership program
+A: Leadership development training available.
+
+444
+
+Q: soft skills training
+A: Communication training provided.
+
+445
+
+Q: english training
+A: Spoken English sessions available.
+
+446
+
+Q: technical workshop
+A: Monthly workshops conducted.
+
+447
+
+Q: certification list
+A: AWS, Azure, PMP supported.
+
+448
+
+Q: career counseling
+A: Career guidance sessions provided.
+
+449
+
+Q: project allocation process
+A: Based on skillset and availability.
+
+450
+
+Q: client confidentiality policy
+A: Strict confidentiality maintained.
+
+451
+
+Q: company holiday policy
+A: Public holidays observed as per calendar.
+
+452
+
+Q: floating holidays
+A: Limited floating holidays available.
+
+453
+
+Q: leave approval process
+A: Manager approval required via portal.
+
+454
+
+Q: half day leave
+A: Half-day leave option available.
+
+455
+
+Q: leave carry forward
+A: Limited leave carry forward allowed.
+
+456
+
+Q: leave encashment
+A: Leave encashment as per policy.
+
+457
+
+Q: probation leave eligibility
+A: Limited leave during probation.
+
+458
+
+Q: remote attendance policy
+A: Online attendance marking required.
+
+459
+
+Q: timesheet approval
+A: Approved by reporting manager.
+
+460
+
+Q: client billing cycle
+A: Monthly or milestone-based billing.
+
+461
+
+Q: invoice payment terms
+A: Net 15 or Net 30 terms.
+
+462
+
+Q: gst invoice
+A: GST-compliant invoices provided.
+
+463
+
+Q: international payment mode
+A: Wire transfer and online gateways accepted.
+
+464
+
+Q: currency supported
+A: INR, USD, GBP accepted.
+
+465
+
+Q: late payment policy
+A: Late fee as per agreement.
+
+466
+
+Q: project cancellation policy
+A: Governed by contract terms.
+
+467
+
+Q: resource replacement
+A: Replacement provided if required.
+
+468
+
+Q: nda signing process
+A: NDA signed before project discussion.
+
+469
+
+Q: confidentiality agreement
+A: Strict confidentiality ensured.
+
+470
+
+Q: compliance standards
+A: Industry-standard compliance followed.
+
+471
+
+Q: iso certification
+A: Certification details shared on request.
+
+472
+
+Q: data privacy policy
+A: Strong data privacy policy enforced.
+
+473
+
+Q: gdpr compliance
+A: GDPR compliance supported for EU clients.
+
+474
+
+Q: secure coding practice
+A: OWASP guidelines followed.
+
+475
+
+Q: encryption standards
+A: AES and SSL encryption used.
+
+476
+
+Q: firewall configuration
+A: Secure firewall setup ensured.
+
+477
+
+Q: access control system
+A: Role-based secure access.
+
+478
+
+Q: backup frequency
+A: Daily automated backups configured.
+
+479
+
+Q: data retention policy
+A: As per agreement and regulations.
+
+480
+
+Q: server location
+A: Server location chosen per client need.
+
+481
+
+Q: client portal access
+A: Dedicated client dashboard provided.
+
+482
+
+Q: milestone tracking
+A: Online milestone tracking enabled.
+
+483
+
+Q: progress report frequency
+A: Weekly progress reports shared.
+
+484
+
+Q: communication channel
+A: Email and Slack preferred.
+
+485
+
+Q: urgent support contact
+A: Emergency contact shared after onboarding.
+
+486
+
+Q: service level agreement
+A: SLA defined before project start.
+
+487
+
+Q: uptime sla
+A: 99% uptime commitment.
+
+488
+
+Q: support escalation time
+A: Within 4 business hours.
+
+489
+
+Q: feature enhancement request
+A: Evaluated and quoted separately.
+
+490
+
+Q: roadmap planning
+A: Roadmap shared during planning phase.
+
+491
+
+Q: product launch support
+A: Launch assistance provided.
+
+492
+
+Q: marketing integration
+A: CRM and marketing tools integrated.
+
+493
+
+Q: email marketing setup
+A: Mailchimp and SendGrid supported.
+
+494
+
+Q: sms marketing integration
+A: Bulk SMS tools integrated.
+
+495
+
+Q: chatbot automation
+A: Automated chatbot workflows developed.
+
+496
+
+Q: ai model deployment
+A: AI models deployed on cloud.
+
+497
+
+Q: ml training support
+A: Model training and tuning supported.
+
+498
+
+Q: dataset preparation
+A: Data preprocessing handled.
+
+499
+
+Q: model evaluation
+A: Accuracy and performance evaluated.
+
+500
+
+Q: predictive dashboard
+A: Predictive insights dashboard built.
+
+501
+
+Q: recommendation system
+A: Custom recommendation engines built.
+
+502
+
+Q: fraud detection system
+A: AI-based fraud detection supported.
+
+503
+
+Q: image recognition
+A: Image classification models implemented.
+
+504
+
+Q: sentiment analysis
+A: NLP sentiment models developed.
+
+505
+
+Q: speech recognition
+A: Speech-to-text systems integrated.
+
+506
+
+Q: chatbot training data
+A: Custom chatbot dataset prepared.
+
+507
+
+Q: ai maintenance
+A: Continuous AI model improvement offered.
+
+508
+
+Q: edge computing support
+A: Edge deployment supported if required.
+
+509
+
+Q: api rate limiting
+A: Rate limiting configured for APIs.
+
+510
+
+Q: caching strategy
+A: Redis caching implemented.
+
+511
+
+Q: database sharding
+A: Horizontal scaling supported.
+
+512
+
+Q: query optimization
+A: Query performance tuned.
+
+513
+
+Q: indexing strategy
+A: Proper indexing strategy applied.
+
+514
+
+Q: code documentation tool
+A: Swagger and ReadTheDocs used.
+
+515
+
+Q: log monitoring
+A: Centralized log monitoring enabled.
+
+516
+
+Q: error tracking
+A: Error tracking tools integrated.
+
+517
+
+Q: analytics dashboard
+A: Real-time analytics dashboards built.
+
+518
+
+Q: customer support portal
+A: Online helpdesk portal developed.
+
+519
+
+Q: crm integration support
+A: Salesforce and HubSpot supported.
+
+520
+
+Q: erp integration support
+A: SAP and custom ERP integrated.
+
+521
+
+Q: payroll compliance
+A: Statutory compliance maintained.
+
+522
+
+Q: recruitment portal
+A: Custom recruitment portal developed.
+
+523
+
+Q: job posting integration
+A: LinkedIn and Indeed integration available.
+
+524
+
+Q: video interview platform
+A: Integrated video interview solutions.
+
+525
+
+Q: background verification support
+A: Third-party verification supported.
+
+526
+
+Q: employee engagement tools
+A: Internal engagement platforms provided.
+
+527
+
+Q: performance appraisal system
+A: Digital appraisal systems implemented.
+
+528
+
+Q: kpi tracking system
+A: KPI dashboards built.
+
+529
+
+Q: survey tool development
+A: Online survey systems created.
+
+530
+
+Q: feedback management
+A: Feedback collection systems implemented.
+
+531
+
+Q: event management system
+A: Event registration systems developed.
+
+532
+
+Q: ticket booking system
+A: Online booking platforms built.
+
+533
+
+Q: hotel management software
+A: Hospitality management solutions delivered.
+
+534
+
+Q: travel booking system
+A: Travel management systems developed.
+
+535
+
+Q: taxi booking app
+A: Ride booking applications built.
+
+536
+
+Q: food delivery app
+A: Food ordering platforms developed.
+
+537
+
+Q: grocery app development
+A: Grocery eCommerce apps built.
+
+538
+
+Q: marketplace platform
+A: Multi-vendor marketplace solutions.
+
+539
+
+Q: auction platform
+A: Online auction systems developed.
+
+540
+
+Q: membership portal
+A: Subscription-based membership systems.
+
+541
+
+Q: elearning platform
+A: Online learning management systems built.
+
+542
+
+Q: quiz application
+A: Interactive quiz platforms developed.
+
+543
+
+Q: exam portal
+A: Online examination systems implemented.
+
+544
+
+Q: certificate generation system
+A: Automated certificate systems built.
+
+545
+
+Q: document management system
+A: Secure DMS solutions delivered.
+
+546
+
+Q: workflow management
+A: Workflow automation systems provided.
+
+547
+
+Q: helpdesk system
+A: Customer helpdesk software developed.
+
+548
+
+Q: complaint management
+A: Complaint tracking systems built.
+
+549
+
+Q: loyalty program system
+A: Loyalty management platforms created.
+
+550
+
+Q: referral tracking system
+A: Referral program tracking implemented.
+
+551
+
+Q: qr code integration
+A: QR code features integrated.
+
+552
+
+Q: barcode system
+A: Barcode scanning systems supported.
+
+553
+
+Q: biometric attendance integration
+A: Biometric device integration available.
+
+554
+
+Q: payroll automation
+A: Automated payroll calculations implemented.
+
+555
+
+Q: hr analytics
+A: HR analytics dashboards developed.
+
+556
+
+Q: employee self service portal
+A: ESS portal created.
+
+557
+
+Q: digital signature integration
+A: E-signature integration supported.
+
+558
+
+Q: pdf report generation
+A: Dynamic PDF reports generated.
+
+559
+
+Q: excel export feature
+A: Data export to Excel supported.
+
+560
+
+Q: data visualization tools
+A: Charts and dashboards implemented.
+
+561
+
+Q: graph integration
+A: Chart libraries integrated.
+
+562
+
+Q: audit log system
+A: Detailed audit logs maintained.
+
+563
+
+Q: admin audit trail
+A: Admin activity tracking enabled.
+
+564
+
+Q: user session tracking
+A: Secure session monitoring implemented.
+
+565
+
+Q: multi tenant architecture
+A: Multi-tenant SaaS supported.
+
+566
+
+Q: saas platform development
+A: SaaS products developed.
+
+567
+
+Q: subscription management
+A: Subscription lifecycle managed.
+
+568
+
+Q: billing automation
+A: Automated billing workflows built.
+
+569
+
+Q: invoice pdf generation
+A: Invoice PDFs auto-generated.
+
+570
+
+Q: payment reconciliation
+A: Payment reconciliation supported.
+
+571
+
+Q: admin dashboard customization
+A: Fully customizable dashboards provided.
+
+572
+
+Q: user analytics tracking
+A: User behavior analytics integrated.
+
+573
+
+Q: google tag manager setup
+A: GTM configuration available.
+
+574
+
+Q: seo audit
+A: Technical SEO audit conducted.
+
+575
+
+Q: performance audit
+A: Website performance audit offered.
+
+576
+
+Q: lighthouse optimization
+A: Google Lighthouse score optimized.
+
+577
+
+Q: page speed improvement
+A: Page speed optimized.
+
+578
+
+Q: cdn integration
+A: CDN setup supported.
+
+579
+
+Q: cloudflare setup
+A: Cloudflare integration available.
+
+580
+
+Q: dns configuration
+A: DNS configuration support provided.
+
+581
+
+Q: domain pointing
+A: Domain mapping assistance available.
+
+582
+
+Q: api throttling
+A: API throttling mechanisms implemented.
+
+583
+
+Q: secure login
+A: Two-factor authentication supported.
+
+584
+
+Q: otp verification
+A: OTP verification enabled.
+
+585
+
+Q: password reset workflow
+A: Secure password reset flow implemented.
+
+586
+
+Q: captcha integration
+A: CAPTCHA added for security.
+
+587
+
+Q: session timeout policy
+A: Auto session timeout enabled.
+
+588
+
+Q: user role management
+A: Flexible user role management.
+
+589
+
+Q: admin permission control
+A: Granular permission settings available.
+
+590
+
+Q: audit compliance reporting
+A: Compliance reports generated.
+
+591
+
+Q: internal audit system
+A: Internal audits tracked digitally.
+
+592
+
+Q: project archival
+A: Archived projects stored securely.
+
+593
+
+Q: version upgrade policy
+A: Version updates managed systematically.
+
+594
+
+Q: continuous improvement policy
+A: Continuous improvement encouraged.
+
+595
+
+Q: feedback loop system
+A: Feedback loop integrated in workflow.
+
+596
+
+Q: client retention strategy
+A: Long-term support plans offered.
+
+597
+
+Q: partnership agreement
+A: Formal partnership agreements signed.
+
+598
+
+Q: affiliate program
+A: Affiliate marketing program available.
+
+599
+
+Q: reseller commission
+A: Commission-based reseller model.
+
+600
+
+Q: technology consulting
+A: End-to-end technology consulting provided.
+
+
+601 
+
+Q. internship provide 
+A. yes we're provide internship
+
+602
+
+Q. chennai location
+A. two location in chennai 
+
+603.
+Q. Address
+A. No 455, Shanmugam Road,K K Nagar,Chennai - 600078, Tamil Nadu 2. Perungudi, Chennai (near Kodandarama Nagar/OMR stretch).
+
+604.
+Q. frontend requirements
+A.React Native,html,css,js
+
+605.
+Q. backend requirements
+A.yes we have Python,java,node.js are in backend requirements.
+
+606.
+Q. how many employees
+A. 10000+ employees working from our company
+
+607.
+Q.i can apply for your company
+A.yes you can apply for our company link
+
+608.
+Q.do you provide work for home
+A.yes we provide work for home
+
+609.
+Q.how many shift in your office
+A. we have 2 shift in our office 7 am to 8 pm and 9 pm to 6 am
+
+610.
+Q.do you provide remote office
+A. yes we provide remote office
+
+612.
+Q.how many roles do you provide
+A. we provide 10+ roles
+
+613.
+Q.which roles do you provide
+A.**Full Stack Developer**, **Java Developer**, **Python Developer**, **Data Analyst**, **AI Engineer**, Cloud Engineers (AWS/Azure)
+
+614.
+Q.Key  job roles
+A.Software Development & Engineering,Data Science & Analytics,Cloud & Infrastructure,AI & Machine Learning,Cybersecurity,QA & Testing,DevOps & Automation,UI/UX Design,Product Management,Technical Support & Services
+
+615.
+Q.do you provide health insurance
+A.Yes, we provide health insurance through Star Health Insurance
+
+616
+Q: company email format
+A: firstname.lastname@zensar.com
+
+617
+Q: job offer acceptance process
+A: Accept offer via email confirmation.
+
+618
+Q: technical test mode
+A: Online coding and MCQ test.
+
+619
+Q: coding languages for test
+A: Java, Python, C++, JavaScript.
+
+620
+Q: aptitude test topics
+A: Quantitative, logical reasoning, verbal.
+
+621
+Q: hr interview questions
+A: Basic HR and behavioral questions.
+
+622
+Q: bond policy
+A: No mandatory bond for most roles.
+
+623
+Q: internship interview difficulty
+A: Moderate level technical questions.
+
+624
+Q: company dress code monday
+A: Formal attire preferred.
+
+625
+Q: company transport facility
+A: Transport provided for night shifts.
+
+626
+Q: cafeteria facility
+A: In-house cafeteria available.
+
+627
+Q: food allowance
+A: Provided for certain projects.
+
+628
+Q: company security
+A: 24/7 security and surveillance.
+
+629
+Q: biometric attendance
+A: Biometric attendance system used.
+
+630
+Q: employee id card
+A: Mandatory ID card for entry.
+
+631
+Q: guest entry policy
+A: Prior approval required.
+
+632
+Q: data access policy
+A: Restricted access based on roles.
+
+633
+Q: internet usage policy
+A: Monitored and secured access.
+
+634
+Q: software license policy
+A: Licensed tools only allowed.
+
+635
+Q: employee handbook
+A: Provided during onboarding.
+
+636
+Q: probation confirmation
+A: Based on performance review.
+
+637
+Q: resignation notice format
+A: Email to HR and manager.
+
+638
+Q: job transfer policy
+A: Internal transfer allowed.
+
+639
+Q: cross team collaboration
+A: Encouraged across departments.
+
+640
+Q: meeting rooms
+A: Fully equipped meeting rooms available.
+
+641
+Q: video conferencing tools
+A: Zoom and Microsoft Teams used.
+
+642
+Q: internal chat tool
+A: Slack used for communication.
+
+643
+Q: email response time
+A: Within 24 working hours.
+
+644
+Q: project deadline policy
+A: Strict adherence to deadlines.
+
+645
+Q: overtime compensation
+A: Compensatory off provided.
+
+646
+Q: learning budget
+A: Budget allocated for learning.
+
+647
+Q: certification reimbursement process
+A: Submit proof for reimbursement.
+
+648
+Q: coding challenge platform
+A: HackerRank or internal platform.
+
+649
+Q: hackathon rewards
+A: Cash and recognition awards.
+
+650
+Q: innovation projects
+A: Employees can propose ideas.
+
+651
+Q: company newsletter
+A: Monthly newsletter shared.
+
+652
+Q: employee feedback system
+A: Anonymous feedback system available.
+
+653
+Q: exit clearance process
+A: Clearance from all departments required.
+
+654
+Q: final paycheck timeline
+A: Within 30 days after exit.
+
+655
+Q: hr portal access
+A: Provided to all employees.
+
+656
+Q: salary structure
+A: Basic + allowances + bonus.
+
+657
+Q: internship report submission
+A: Mandatory for completion.
+
+658
+Q: internship mentor feedback
+A: Provided at end of internship.
+
+659
+Q: intern project evaluation criteria
+A: Code quality and contribution.
+
+660
+Q: internship extension criteria
+A: Based on performance.
+
+661
+Q: training materials
+A: Shared via LMS portal.
+
+662
+Q: company recognition platform
+A: Internal reward system.
+
+663
+Q: peer appreciation
+A: Employees can appreciate peers.
+
+664
+Q: team building activities
+A: Conducted quarterly.
+
+665
+Q: health checkup
+A: Annual health check provided.
+
+666
+Q: insurance coverage
+A: Covers employee and family.
+
+667
+Q: mental health support
+A: Counseling services available.
+
+668
+Q: employee helpline
+A: Dedicated HR helpline available.
+
+669
+Q: grievance resolution time
+A: Within 7 working days.
+
+670
+Q: project ownership
+A: Assigned to team leads.
+
+671
+Q: code review process
+A: Peer code review mandatory.
+
+672
+Q: pull request approval
+A: Required before merge.
+
+673
+Q: git branching model
+A: Feature-based branching.
+
+674
+Q: release cycle
+A: Monthly or sprint-based releases.
+
+675
+Q: deployment approval
+A: Approved by DevOps lead.
+
+676
+Q: rollback plan
+A: Backup rollback strategy maintained.
+
+677
+Q: data encryption policy
+A: End-to-end encryption implemented.
+
+678
+Q: api testing tools
+A: Postman and Swagger used.
+
+679
+Q: frontend frameworks
+A: React and Angular preferred.
+
+680
+Q: backend frameworks
+A: Django, Spring Boot used.
+
+681
+Q: mobile frameworks
+A: Flutter and React Native.
+
+682
+Q: ui design tools
+A: Figma and Adobe XD.
+
+683
+Q: version control tools
+A: GitHub and GitLab.
+
+684
+Q: testing frameworks
+A: Selenium, JUnit, PyTest.
+
+685
+Q: bug severity levels
+A: Low, Medium, High, Critical.
+
+686
+Q: sprint velocity
+A: Measured every sprint.
+
+687
+Q: story points estimation
+A: Fibonacci sequence used.
+
+688
+Q: backlog grooming
+A: Weekly grooming sessions.
+
+689
+Q: requirement documentation format
+A: SRS document used.
+
+690
+Q: ui approval process
+A: Client approval required.
+
+691
+Q: project kickoff document
+A: Prepared before development.
+
+692
+Q: coding guidelines
+A: Follow industry best practices.
+
+693
+Q: security audit frequency
+A: Quarterly audits conducted.
+
+694
+Q: vulnerability fixing timeline
+A: Based on severity level.
+
+695
+Q: system downtime policy
+A: Scheduled maintenance communicated.
+
+696
+Q: database backup policy
+A: Daily automated backups.
+
+697
+Q: log retention period
+A: Stored for audit purposes.
+
+698
+Q: api response format
+A: JSON standard format.
+
+699
+Q: error handling strategy
+A: Centralized error logging.
+
+700
+Q: monitoring tools
+A: CloudWatch and Grafana used.
+
+701
+Q: alert system
+A: Real-time alerts configured.
+
+702
+Q: onboarding duration
+A: 1–2 weeks onboarding process.
+
+703
+Q: welcome kit
+A: Provided on joining.
+
+704
+Q: employee orientation
+A: Conducted by HR team.
+
+705
+Q: probation review meeting
+A: Conducted at end of probation.
+
+706
+Q: career growth path
+A: Defined career roadmap.
+
+707
+Q: leadership opportunities
+A: Available for experienced employees.
+
+708
+Q: global project exposure
+A: Opportunities available.
+
+709
+Q: certification priority
+A: Cloud and AI certifications.
+
+710
+Q: internship domain selection
+A: Based on interest and skill.
+
+711
+Q: intern team allocation
+A: Assigned by mentor.
+
+712
+Q: intern reporting manager
+A: Assigned during onboarding.
+
+713
+Q: internship completion criteria
+A: Project completion and report.
+
+714
+Q: attendance requirement
+A: Minimum attendance required.
+
+715
+Q: performance tracking
+A: Weekly performance evaluation.
+
+716
+Q: project milestone tracking
+A: Done via Jira.
+
+717
+Q: code repository access
+A: Provided to developers.
+
+718
+Q: software deployment stages
+A: Dev → Staging → Production.
+
+719
+Q: production bug handling
+A: Immediate fix required.
+
+720
+Q: feature release notes
+A: Shared after deployment.
+
+721
+Q: change log maintenance
+A: Maintained for all releases.
+
+722
+Q: api versioning
+A: Version-based API management.
+
+723
+Q: documentation updates
+A: Updated regularly.
+
+724
+Q: knowledge sharing session
+A: Conducted weekly.
+
+725
+Q: internal wiki usage
+A: Used for documentation.
+
+726
+Q: coding competition
+A: Conducted internally.
+
+727
+Q: innovation challenge
+A: Employees participate yearly.
+
+728
+Q: tech stack upgrade
+A: Updated as per trends.
+
+729
+Q: training feedback
+A: Collected after sessions.
+
+730
+Q: employee survey
+A: Conducted annually.
+
+731
+Q: office infrastructure
+A: Modern office facilities.
+
+732
+Q: workspace allocation
+A: Assigned per employee.
+
+733
+Q: desk booking system
+A: Available for hybrid model.
+
+734
+Q: remote work tools
+A: VPN and secure access.
+
+735
+Q: system security policy
+A: Strict endpoint security.
+
+736
+Q: device management
+A: Managed by IT team.
+
+737
+Q: password policy
+A: Strong password enforcement.
+
+738
+Q: data sharing policy
+A: Controlled and monitored.
+
+739
+Q: external communication
+A: Approved communication only.
+
+740
+Q: brand guidelines
+A: Follow company branding rules.
+
+741
+Q: marketing team role
+A: Handles promotions and campaigns.
+
+742
+Q: sales team role
+A: Manages client acquisition.
+
+743
+Q: support escalation
+A: Multi-level escalation system.
+
+744
+Q: issue resolution time
+A: Based on SLA.
+
+745
+Q: documentation approval
+A: Approved by project lead.
+
+746
+Q: training completion certificate
+A: Provided after training.
+
+747
+Q: project demo schedule
+A: Weekly or bi-weekly.
+
+748
+Q: internal audit frequency
+A: Conducted yearly.
+
+749
+Q: compliance audit
+A: As per regulations.
+
+750
+Q: legal team role
+A: Handles contracts and compliance.
+
+751
+Q: company policy updates
+A: Shared via email.
+
+752
+Q: remote login security
+A: VPN mandatory.
+
+753
+Q: system maintenance
+A: Scheduled maintenance cycles.
+
+754
+Q: feature prioritization
+A: Based on business needs.
+
+755
+Q: product backlog owner
+A: Product owner manages backlog.
+
+756
+Q: sprint goal definition
+A: Defined in sprint planning.
+
+757
+Q: project risk mitigation
+A: Risk management strategies applied.
+
+758
+Q: quality assurance process
+A: Multi-level QA testing.
+
+759
+Q: customer satisfaction goal
+A: High-quality delivery ensured.
+
+760
+Q: product scalability
+A: Designed for high scalability.
+
+761
+Q: dev environment setup
+A: Provided during onboarding.
+
+762
+Q: code editor preference
+A: VS Code, IntelliJ supported.
+
+763
+Q: software installation support
+A: IT team assists setup.
+
+764
+Q: internal ticket system
+A: Used for issue tracking.
+
+765
+Q: helpdesk response time
+A: Within SLA limits.
+
+766
+Q: bug resolution workflow
+A: Assign → Fix → Test → Deploy.
+
+767
+Q: team collaboration tools
+A: Slack, Jira, Confluence.
+
+768
+Q: feature testing stages
+A: Unit → Integration → UAT.
+
+769
+Q: deployment checklist
+A: Pre-deployment checklist followed.
+
+770
+Q: production monitoring
+A: Continuous monitoring enabled.
+
+771
+Q: logging tools
+A: ELK stack used.
+
+772
+Q: alert escalation
+A: Immediate escalation for critical issues.
+
+773
+Q: code ownership
+A: Assigned per module.
+
+774
+Q: project documentation review
+A: Reviewed before delivery.
+
+775
+Q: internal project demo
+A: Conducted before client demo.
+
+776
+Q: bug triage meeting
+A: Weekly bug review meeting.
+
+777
+Q: employee retention policy
+A: Focus on long-term growth.
+
+778
+Q: work life balance
+A: Balanced work culture.
+
+779
+Q: flexible working hours policy
+A: Available for some roles.
+
+780
+Q: remote work eligibility
+A: Based on role and project.
+
+781
+Q: onsite opportunity
+A: Based on performance.
+
+782
+Q: client communication training
+A: Provided for employees.
+
+783
+Q: presentation skills training
+A: Conducted periodically.
+
+784
+Q: documentation standards
+A: Standard templates followed.
+
+785
+Q: team lead responsibilities
+A: Manage team and delivery.
+
+786
+Q: project escalation process
+A: Defined escalation matrix.
+
+787
+Q: continuous integration
+A: Automated CI pipelines.
+
+788
+Q: continuous deployment
+A: CD pipelines implemented.
+
+789
+Q: test automation coverage
+A: High test coverage ensured.
+
+790
+Q: release approval authority
+A: Project manager approves.
+
+791
+Q: sprint review meeting
+A: Conducted after sprint end.
+
+792
+Q: client approval process
+A: Required before final delivery.
+
+793
+Q: documentation delivery format
+A: PDF and online formats.
+
+794
+Q: system handover process
+A: Complete handover documentation.
+
+795
+Q: knowledge transfer session
+A: Conducted before closure.
+
+796
+Q: final project signoff
+A: Client approval required.
+
+797
+Q: maintenance contract
+A: Annual maintenance available.
+
+798
+Q: technical support availability
+A: 24/7 support for clients.
+
+799
+Q: product enhancement
+A: Continuous improvements done.
+
+800
+Q: future roadmap
+A: Planned based on market trends.
+
+801.
+Q: key role category
+A:1. Key Technical Role Categories,Management & Consulting Roles,Non-Technical & Support Roles
+
+802.
+Q:Key Technical Role Categories
+A:Engineering & Development,Data & Artificial Intelligence,Cloud & Infrastructure,Testing & QA
+
+803.
+Q:Management & Consulting Roles
+A:Delivery & Projects,Domain Experts
+
+804.
+Q:Non-Technical & Support Roles
+A:Finance & Operations,Talent & Learning,Corporate
+
+805.
+Q:Engineering & Development
+A:Full Stack Experts,Specialized Developers,Platform Specific
+
+806.
+Q:Full Stack Experts
+A.Java/Angular, React/Node.js, and .NET.
+
+807.
+Q:Specialized Developers
+A:C++, Python, Golang, and C#.Net Fullstack Engineers.
+
+808.
+Q:Platform Specific
+A:Salesforce Lightning Developers, SAP S/4HANA Cloud Developers, and Guidewire Integration Developers.
+
+809.
+Q:Data & Artificial Intelligence
+A.AI/ML Engineers,Data Architects & Engineers,Data Annotation
+
+810.
+Q.AI/ML Engineers
+A.Focusing on Generative AI (GenAI) and AWS SageMaker.
+
+811.
+Q:Data Architects & Engineers
+A:Experts in Snowflake, Databricks, and Big Data ETL.
+
+812.
+Q:Data Annotation
+A:Specialized roles for Robotics and AI training.
+
+813.
+Q:Cloud & Infrastructure
+A:DevOps & SRE,Cloud Security,Network Engineers
+
+814.
+Q:DevOps & SRE
+A:Azure DevOps, CI/CD Automation (Gearset), and Site Reliability Engineers.
+
+815.
+Q:Cloud Security
+A:Architects and specialists for secure landing zones and IAM.
+
+816.
+Q:Network Engineers
+A.Specialists in Cisco and Unified IT infrastructure.
+
+817.
+Q:Testing & QA
+A:Automation Leads,Quality Engineering Analysts
+
+818.
+Q:Automation Leads
+A:Specialized in TOSCA and Selenium.
+
+819.
+Q:Quality Engineering Analysts
+A:Focusing on E2E interface testing and Guidewire Policy Center QA.
+
+820.
+Q:Delivery & Projects
+A:Delivery Heads, Project Managers, and Transition Managers.
+
+821.
+Q:Domain Experts
+A:Business Analysts (specifically for BFSI, Retail, and Insurance domains) and Business Process Consultants.
+
+822.
+Q:Finance & Operations
+A:Accounts Payable/Receivable, Payroll Executives, and Finance Data Analysts.
+
+823.
+Q:Talent & Learning
+A:Learning Consultants, Talent Management specialists, and HR Generalists.
+
+824.
+Q:Corporate
+A:Content Writers, Internal Communications Executives, and Marketing Specialists.
+
+Q: What are the available internship roles?
+A: We have several internship roles available for you: 1. Python/Django Developer Intern, 2. Frontend (React) Developer Intern, 3. Mobile App Developer Intern, 4. AI/ML Developer Intern, 5. UI/UX Design Intern, and 6. Cloud/DevOps Intern. Which one would you like to apply for?
+
+Q: internship roles
+A: We offer 3-6 internship roles: Python/Django, Frontend, Mobile Apps, AI/ML, UI/UX Design, and Cloud/DevOps,frontend,backend and FullStack web developer. Please select one to get the application link.

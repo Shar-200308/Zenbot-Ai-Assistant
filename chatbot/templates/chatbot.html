@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>ZenBot AI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- FontAwesome Icons (self-hosted — Disadvantage #10 fix) -->
+  <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=5.0">
+</head>
+
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <div class="sidebar">
+    <div class="brand">
+      <img src="{% static 'assets/ZenSar.png' %}" alt="Zensar Logo" class="logo">
+      <span>Zensar</span>
+    </div>
+
+    <!-- Disadvantage #9 fix: removed onclick="newChat()" / onclick="clearHistory()" inline handlers -->
+    <button id="btnNewChat">＋ New Chat</button>
+    <button id="btnClearHistory">🗑 Clear History</button>
+
+    <!-- Previous Chat List -->
+    <h3 class="history-title">Previous Chats</h3>
+    <ul id="historyList"></ul>
+
+    <!-- User Profile -->
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="avatar-circle">👤</div>
+        <div class="user-text-details">
+          <span id="userNameDisplay" class="user-name-text">...</span>
+          <span id="userEmailDisplay" class="user-email-text">...</span>
+        </div>
+      </div>
+      <div class="user-menu-container">
+        <!-- Disadvantage #9 fix: removed onclick="toggleUserMenu()" -->
+        <button class="dots-btn" id="btnDotsMenu">⋮</button>
+        <div id="userMenu" class="user-menu">
+          <!-- Disadvantage #9 fix: removed onclick="showUserProfile()" / onclick="logout()" -->
+          <button id="btnShowProfile">Profile</button>
+          <button id="btnLogout">Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHAT ===== -->
+  <div class="chat-wrapper">
+    <div class="chat-header">
+      <!-- Disadvantage #9 fix: removed onclick="toggleSidebar()" -->
+      <button class="menu-toggle" id="menuToggle">☰</button>
+      🤖 ZenBot AI
+    </div>
+
+    <div class="chat-box" id="chatBox">
+      <div class="bot-message">
+        <img src="{% static 'assets/Zenbot.png' %}?v=5" class="bot-avatar">
+        <div class="bot-text">
+          Hi 👋 I'm <b>ZenBot</b>.<br>
+          How can I help you today?
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input" id="chatInputArea">
+      <!-- Disadvantage #9 fix: removed onkeydown inline handler — moved to addEventListener below -->
+      <input id="userInput" type="text" placeholder="Type your message…">
+      <!-- Disadvantage #9 fix: removed onchange="uploadResume(this)" inline handler -->
+      <input type="file" id="resumeFileInput" accept=".pdf" style="display:none">
+      <!-- Disadvantage #9 fix: removed onclick="document.getElementById(...).click()" inline handler -->
+      <button class="upload-btn" id="btnUploadResume" title="Upload Resume (PDF)">📎</button>
+      <!-- Disadvantage #9 fix: removed onclick="toggleVoice(this)" inline handler -->
+      <button id="micBtn" class="mic-btn">🎤</button>
+      <!-- Disadvantage #9 fix: removed onclick="sendMessage()" inline handler -->
+      <button id="btnSend">➤</button>
+    </div>
+  </div>
+
+  <!-- ===== LOGOUT CONFIRMATION MODAL ===== -->
+  <div class="logout-modal-overlay" id="logoutModal">
+    <div class="logout-modal">
+      <div class="logout-modal-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+      <h3 class="logout-modal-title">Logout Confirmation</h3>
+      <p class="logout-modal-text">Are you sure you want to logout from <strong>ZenBot</strong>?</p>
+      <div class="logout-modal-buttons">
+        <!-- Disadvantage #9 fix: removed onclick inline handlers from modal buttons -->
+        <button class="logout-btn-no" id="logoutBtnNo">No, Stay</button>
+        <button class="logout-btn-yes" id="logoutBtnYes">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="{% static 'js/chatbot.js' %}?v=5.0"></script>
+  <script src="{% static 'js/voice.js' %}?v=5.0"></script>
+
+  <!--
+    Disadvantage #9 fix: all inline event handlers replaced with addEventListener.
+    This makes the template CSP-compatible and enables automated UI testing.
+  -->
+  <script>
+    (function () {
+      // Sidebar & navigation
+      document.getElementById('sidebarOverlay').addEventListener('click', toggleSidebar);
+      document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+      // Sidebar actions
+      document.getElementById('btnNewChat').addEventListener('click', newChat);
+      document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
+
+      // User menu
+      document.getElementById('btnDotsMenu').addEventListener('click', toggleUserMenu);
+      document.getElementById('btnShowProfile').addEventListener('click', showUserProfile);
+      document.getElementById('btnLogout').addEventListener('click', logout);
+
+      // Chat input
+      document.getElementById('userInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+      });
+      document.getElementById('btnSend').addEventListener('click', sendMessage);
+
+      // Resume upload
+      document.getElementById('resumeFileInput').addEventListener('change', function () {
+        uploadResume(this);
+      });
+      document.getElementById('btnUploadResume').addEventListener('click', function () {
+        document.getElementById('resumeFileInput').click();
+      });
+
+      // Voice input
+      document.getElementById('micBtn').addEventListener('click', function () {
+        toggleVoice(this);
+      });
+
+      // Logout modal buttons
+      document.getElementById('logoutBtnNo').addEventListener('click', closeLogoutModal);
+      document.getElementById('logoutBtnYes').addEventListener('click', confirmLogout);
+    })();
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+{% load static %}
+    <div class="panel-layout">
+
+        <!-- ── Left Column: Job Roles & Openings Navigator ── -->
+        <aside class="roles-column" id="rolesColumn">
+            <div class="roles-header">
+                <div class="roles-header-title">
+                    <i class="fas fa-layer-group" style="color:#58a6ff;"></i>
+                    <span>Job Posts & Roles</span>
+                </div>
+                <span class="roles-header-count" id="rolesSidebarCount">...</span>
+            </div>
+
+            <!-- Role Post Filters (Active / Inactive Selection!) -->
+            <div class="role-post-filters" title="Filter job roles by active or inactive status">
+                <button class="rpf-btn active" id="rpf-all" onclick="filterRolePosts('all')">
+                    All Posts
+                </button>
+                <button class="rpf-btn" id="rpf-active" onclick="filterRolePosts('active')">
+                    <span class="dot-status green"></span> Active
+                </button>
+                <button class="rpf-btn" id="rpf-inactive" onclick="filterRolePosts('inactive')">
+                    <span class="dot-status red"></span> Inactive
+                </button>
+            </div>
+
+            <!-- Role search box -->
+            <div class="role-search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="roleSearchInput" placeholder="Filter roles (e.g. Full Stack)..." oninput="onRoleSearch(this.value)">
+            </div>
+
+            <!-- Roles list container -->
+            <div class="roles-list" id="rolesSidebarList">
+                <div style="text-align:center; padding:20px; color:#8b949e; font-size:12px;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading roles...
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── Right Column: Applications & Candidate Review Side ── -->
+        <section class="apps-column" id="appsColumn">
+
+            <!-- Selected Post Details Banner ("Post Also Mentioned") -->
+            <div class="selected-post-banner" id="selectedPostBanner">
+                <!-- Dynamically populated via renderSelectedPostBanner() -->
+            </div>
+
+            <!-- Stats row -->
+            <div class="stats-row" id="statsRow">
+                <div class="stat-card active" onclick="filterBy('all')" id="stat-all">
+                    <div class="stat-num" id="cnt-all">—</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card s-pending" onclick="filterBy('pending')" id="stat-pending">
+                    <div class="stat-num" id="cnt-pending">—</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card s-under_review" onclick="filterBy('under_review')" id="stat-under_review">
+                    <div class="stat-num" id="cnt-under_review">—</div>
+                    <div class="stat-label">Under Review</div>
+                </div>
+                <div class="stat-card s-shortlisted" onclick="filterBy('shortlisted')" id="stat-shortlisted">
+                    <div class="stat-num" id="cnt-shortlisted">—</div>
+                    <div class="stat-label">Shortlisted</div>
+                </div>
+                <div class="stat-card s-selected" onclick="filterBy('selected')" id="stat-selected">
+                    <div class="stat-num" id="cnt-selected">—</div>
+                    <div class="stat-label">Selected</div>
+                </div>
+                <div class="stat-card s-rejected" onclick="filterBy('rejected')" id="stat-rejected">
+                    <div class="stat-num" id="cnt-rejected">—</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+            </div>
+
+            <!-- Filter tabs -->
+            <div class="filter-bar">
+                <div class="filter-group-left">
+                    <button class="ftab active" id="ftab-all" onclick="filterBy('all')">All</button>
+                    <button class="ftab" id="ftab-internship" onclick="filterByType('internship')">Internship</button>
+                    <button class="ftab" id="ftab-job" onclick="filterByType('job')">Job</button>
+                    <button class="ftab inactive-tab" id="ftab-archived" onclick="filterArchived()" title="View removed / archived applications"><i class="fas fa-archive"></i> Archived</button>
+                </div>
+                <div class="filter-group-right">
+                    <button class="ftab active" id="ftab-all-resumes" onclick="clearAllFilters()" title="View All Candidate Applications & Resumes">
+                        <i class="fas fa-users" style="color:#58a6ff;"></i> All Candidates
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Actions Toolbar -->
+            <div class="bulk-toolbar" id="bulkToolbar">
+                <div class="bulk-left">
+                    <label class="bulk-select-all-label">
+                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)">
+                        <span class="custom-chk"></span>
+                        <span>Select All</span>
+                    </label>
+                    <span class="bulk-count" id="bulkCount">0 selected</span>
+                </div>
+                <div class="bulk-right" id="bulkActionsRight">
+                    <button class="bulk-delete-btn" id="bulkDeleteBtn" onclick="askBulkRemove()" disabled>
+                        <i class="fas fa-trash-alt"></i> Remove Selected (<span id="bulkDeleteCount">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Applications list -->
+            <div class="apps-list" id="appsList">
+                <!-- skeleton -->
+                <div class="skeleton-card"><div class="sk sk-av"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div></div>
+                <div class="skeleton-card"><div class="sk sk-av"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div></div>
+                <div class="skeleton-card"><div class="sk sk-av"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div></div>
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<script type="module" src="{% static 'js/auth_session.js' %}"></script>

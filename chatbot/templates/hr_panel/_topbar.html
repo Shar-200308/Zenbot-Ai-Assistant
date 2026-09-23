@@ -1,0 +1,32 @@
+﻿<div class="topbar">
+    <div class="topbar-brand">
+        <div class="logo-icon">🤖</div>
+        <div>
+            <h1>Zenbot</h1>
+            <span>HR Review Panel</span>
+        </div>
+    </div>
+    <div class="topbar-right">
+        <span class="hr-badge"><i class="fas fa-shield-alt" style="font-size:9px;"></i> HR Access</span>
+        <button class="topbar-btn" onclick="openAnalyticsModal()" style="border-color:#a855f7; color:#c084fc;" title="View HR Visual Analytics & BI Insights">
+            <i class="fas fa-chart-pie"></i> Analytics & BI
+        </button>
+        <button class="topbar-btn" onclick="openJobsModal()">
+            <i class="fas fa-briefcase"></i> Manage Openings (<span id="topbarJobCount">...</span>)
+        </button>
+        <button class="topbar-btn primary" onclick="openCreateJobModal()">
+            <i class="fas fa-plus"></i> Post New Job
+        </button>
+        <button class="topbar-btn" onclick="exportCandidatesCSV()" style="border-color:#38bdf8; color:#38bdf8;" title="Export candidates to CSV spreadsheet">
+            <i class="fas fa-file-csv"></i> Export CSV
+        </button>
+        <button class="refresh-btn" onclick="loadApplications()">
+            <i class="fas fa-sync-alt" id="refreshIcon"></i> Refresh
+        </button>
+        <a href="/chat/" style="color:#8b949e;font-size:13px;text-decoration:none;">
+            <i class="fas fa-arrow-left"></i> Back to Chat
+        </a>
+    </div>
+</div>
+
+<!-- Toast -->

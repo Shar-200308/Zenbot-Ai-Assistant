@@ -1,0 +1,22 @@
+{% load static %}
+{% comment %}
+  hr_panel.html — Thin shell template (Disadvantage #3 fix)
+  The 3244-line monolith is now split into maintainable partials under hr_panel/:
+    _head.html      — all <head> meta/CSS (973 lines)
+    _topbar.html    — top navigation bar (32 lines)
+    _modals.html    — all modal dialogs (358 lines)
+    _workspace.html — main 2-column application workspace (125 lines)
+    _scripts.html   — all JavaScript (1748 lines)
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% include "hr_panel/_head.html" %}
+</head>
+<body>
+{% include "hr_panel/_topbar.html" %}
+{% include "hr_panel/_modals.html" %}
+{% include "hr_panel/_workspace.html" %}
+{% include "hr_panel/_scripts.html" %}
+</body>
+</html>

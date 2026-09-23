@@ -1,0 +1,38 @@
+[tool.ruff]
+cache-dir = "~/.cache/ruff"
+target-version = "py310"
+exclude = [
+    ".venv",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "chatbot/migrations",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",      # Pyflakes
+    "I",      # isort
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "RUF",    # Ruff-specific rules
+    "SIM",    # flake8-simplify
+    "DTZ",    # flake8-datetimez
+    "PIE",    # flake8-pie
+    "PERF",   # Perflint
+    "PLW",    # Pylint warnings
+]
+ignore = [
+    "RUF012",  # Mutable default value for class attribute (Django models/admin use mutable class attributes)
+    "N999",    # Invalid module name (Django project folder is PascalCase 'Zenbot')
+    "BLE001",  # Do not catch blind exception (Catching Exception is standard in Django views & background tasks)
+    "S110",    # try-except-pass
+    "S112",    # try-except-continue
+    "SIM105",  # suppressible-exception (contextlib.suppress)
+    "PLW0603", # Using the global statement is discouraged (used for singleton LLM and key caching)
+    "PERF203", # try-except within a loop (used intentionally in retry loops)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*" = ["ALL"]

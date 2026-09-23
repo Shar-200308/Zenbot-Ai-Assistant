@@ -1,0 +1,359 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Action Confirmed | ZenBot HR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'fonts/outfit.css' %}">
+        <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: #0d1117;
+            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            color: #c9d1d9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            animation: popIn 0.3s ease;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+        }
+        .card-header {
+            padding: 36px 32px 28px;
+            text-align: center;
+        }
+        .card-header.accepted { background: linear-gradient(135deg, #064e3b, #065f46); border-bottom: 1px solid #10b981; }
+        .card-header.rejected { background: linear-gradient(135deg, #1a1a2e, #2d1b1b); border-bottom: 1px solid #ef4444; }
+        .card-header.error    { background: linear-gradient(135deg, #1e1e2e, #2d2b1b); border-bottom: 1px solid #f59e0b; }
+
+        .icon-circle {
+            width: 72px; height: 72px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; margin: 0 auto 16px;
+        }
+        .icon-circle.accepted { background: rgba(34,197,94,0.2); color: #4ade80; border: 2px solid rgba(34,197,94,0.4); }
+        .icon-circle.rejected { background: rgba(239,68,68,0.2);  color: #f87171; border: 2px solid rgba(239,68,68,0.4); }
+        .icon-circle.error    { background: rgba(245,158,11,0.2); color: #fbbf24; border: 2px solid rgba(245,158,11,0.4); }
+
+        .card-header h1 { font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 6px; }
+        .card-header p  { font-size: 14px; color: #8b949e; }
+
+        .card-body { padding: 24px 32px 32px; }
+
+        .info-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 14px;
+        }
+        .info-row:last-of-type { border-bottom: none; }
+        .info-label { color: #8b949e; font-weight: 500; }
+        .info-val   { color: #e6edf3; font-weight: 600; }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 700;
+        }
+        .pill-selected { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .pill-rejected { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        .alert-already {
+            background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);
+            border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+            font-size: 13px; color: #93c5fd;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .email-note {
+            background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.15);
+            border-radius: 10px; padding: 12px 16px; margin-top: 20px;
+            font-size: 13px; color: #6ee7b7;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .email-note.rejected-note {
+            background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.15);
+            color: #fca5a5;
+        }
+        .email-note.error-note {
+            background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.15);
+            color: #fcd34d;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 24px; }
+        .btn {
+            flex: 1; padding: 11px 20px; border-radius: 9px;
+            font-size: 14px; font-weight: 600; font-family: 'Outfit', sans-serif;
+            text-decoration: none; text-align: center; cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-primary { background: #1f6feb; color: #fff; border: none; }
+        .btn-ghost   { background: transparent; color: #8b949e; border: 1px solid #30363d; }
+
+        .slot-pill {
+            background: #21262d; border: 1px solid #30363d; border-radius: 20px;
+            color: #c9d1d9; font-size: 12px; font-weight: 600; padding: 4px 12px;
+            cursor: pointer; transition: all 0.15s ease;
+        }
+        .slot-pill:hover, .slot-pill.active {
+            background: rgba(52, 211, 153, 0.2); border-color: #34d399; color: #34d399;
+        }
+
+        @keyframes popIn { from{opacity:0;transform:scale(0.92)translateY(10px)} to{opacity:1;transform:scale(1)translateY(0)} }
+    </style>
+</head>
+<body>
+
+{% if error %}
+<!-- Error state -->
+<div class="card">
+    <div class="card-header error">
+        <div class="icon-circle error"><i class="fas fa-exclamation-triangle"></i></div>
+        <h1>Action Failed</h1>
+        <p>Could not process the request.</p>
+    </div>
+    <div class="card-body">
+        <div class="email-note error-note">
+            <i class="fas fa-info-circle"></i>
+            {{ error }}
+        </div>
+        <div class="btn-group">
+            <a href="/hr/" class="btn btn-primary"><i class="fas fa-th-list"></i> Open HR Panel</a>
+        </div>
+    </div>
+</div>
+
+{% elif action == 'allot_schedule' %}
+<!-- HR Mention & Allot Interview Date & Time Screen -->
+<div class="card" style="max-width: 540px;">
+    <div class="card-header accepted">
+        <div class="icon-circle accepted"><i class="fas fa-calendar-check"></i></div>
+        <h1>Allot Interview Schedule</h1>
+        <p>Specify the in-person interview date & time for {{ app.full_name }}</p>
+    </div>
+    <div class="card-body">
+        <div style="background:#0d1117; border:1px solid #21262d; border-radius:10px; padding:12px 16px; margin-bottom:18px;">
+            <div style="font-weight:700; color:#e6edf3; font-size:15px;">{{ app.full_name }}</div>
+            <div style="color:#8b949e; font-size:13px; margin-top:2px;">
+                Role: <strong style="color:#58a6ff;">{{ app.role }}</strong> ({{ type_label }}) • {{ app.email }}
+            </div>
+            <div style="margin-top:6px; font-size:12px; color:#34d399; font-weight:600;">
+                <i class="fas fa-layer-group"></i> {{ rounds_count_text }}
+            </div>
+        </div>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="token" value="{{ token }}">
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:#e6edf3; margin-bottom:6px;">
+                    <i class="fas fa-calendar-day" style="color:#34d399;"></i> Interview Date *
+                </label>
+                <input type="date" name="interview_date" id="allotDate" value="{{ default_date }}" min="{{ min_date }}" required
+                       style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:10px 12px; color:#e6edf3; font-family:'Outfit',sans-serif; font-size:14px;"
+                       onchange="updateSchedulePreview()">
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:#e6edf3; margin-bottom:6px;">
+                    <i class="fas fa-clock" style="color:#38bdf8;"></i> Interview Time Slot *
+                </label>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+                    <button type="button" class="slot-pill active" onclick="setSlotTime('10:30', this)">10:30 AM</button>
+                    <button type="button" class="slot-pill" onclick="setSlotTime('11:30', this)">11:30 AM</button>
+                    <button type="button" class="slot-pill" onclick="setSlotTime('14:00', this)">02:00 PM</button>
+                    <button type="button" class="slot-pill" onclick="setSlotTime('15:30', this)">03:30 PM</button>
+                    <button type="button" class="slot-pill" onclick="setSlotTime('16:30', this)">04:30 PM</button>
+                </div>
+                <input type="time" name="interview_time" id="allotTime" value="{{ default_time }}" required
+                       style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:10px 12px; color:#e6edf3; font-family:'Outfit',sans-serif; font-size:14px;"
+                       onchange="updateSchedulePreview()">
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:#e6edf3; margin-bottom:6px;">
+                    <i class="fas fa-map-marker-alt" style="color:#f87171;"></i> Campus Venue Address *
+                </label>
+                <textarea name="venue_address" rows="2" required
+                          style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:10px 12px; color:#e6edf3; font-family:'Outfit',sans-serif; font-size:13px; line-height:1.4;">{{ default_campus }}</textarea>
+            </div>
+
+            <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:13px; font-weight:600; color:#e6edf3; margin-bottom:6px;">
+                    <i class="fas fa-info-circle" style="color:#fbbf24;"></i> Instructions for Candidate (Optional)
+                </label>
+                <input type="text" name="notes" placeholder="e.g. Please report 15 mins early with original photo ID"
+                       style="width:100%; background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:10px 12px; color:#e6edf3; font-family:'Outfit',sans-serif; font-size:13px;">
+            </div>
+
+            <div style="background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:10px 14px; margin-bottom:20px;">
+                <div style="font-size:11px; font-weight:700; color:#34d399; text-transform:uppercase;">Confirmed Schedule Preview:</div>
+                <div id="liveScheduleBadge" style="font-size:14px; font-weight:700; color:#e6edf3; margin-top:2px;">—</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; background:linear-gradient(135deg,#059669,#10b981); font-size:15px; padding:13px 20px;">
+                <i class="fas fa-check-circle"></i> Confirm Allotment & Send Call Letter
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function setSlotTime(timeVal, btn) {
+    document.getElementById('allotTime').value = timeVal;
+    document.querySelectorAll('.slot-pill').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    updateSchedulePreview();
+}
+
+function updateSchedulePreview() {
+    const dVal = document.getElementById('allotDate').value;
+    const tVal = document.getElementById('allotTime').value;
+    const badge = document.getElementById('liveScheduleBadge');
+    if (!dVal || !tVal) {
+        badge.textContent = 'Please select a date and time';
+        return;
+    }
+    const [year, month, day] = dVal.split('-');
+    const [hours, minutes] = tVal.split(':');
+    const d = new Date(year, month - 1, day, hours, minutes);
+    const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    badge.textContent = `📅 ${dateStr}, ${timeStr} IST`;
+}
+
+document.addEventListener('DOMContentLoaded', updateSchedulePreview);
+</script>
+
+{% elif action == 'accept' %}
+<!-- Accepted state -->
+<div class="card">
+    <div class="card-header accepted">
+        <div class="icon-circle accepted"><i class="fas fa-check"></i></div>
+        <h1>Application Accepted ✅</h1>
+        <p>In-Person Interview Call Letter Dispatched</p>
+    </div>
+    <div class="card-body">
+
+        {% if already_done %}
+        <div class="alert-already">
+            <i class="fas fa-info-circle"></i>
+            This application was already marked as <strong>Selected</strong>.
+        </div>
+        {% endif %}
+
+        <div class="info-row">
+            <span class="info-label">Candidate</span>
+            <span class="info-val">{{ app.full_name }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Applied Role</span>
+            <span class="info-val">{{ app.role }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Type</span>
+            <span class="info-val">{{ type_label }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-val" style="font-size:13px;">{{ app.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="status-pill pill-selected"><span>●</span> Selected</span>
+        </div>
+        {% if scheduled_time %}
+        <div class="info-row">
+            <span class="info-label">Allotted Schedule</span>
+            <span class="info-val" style="color:#4ade80;">📅 {{ scheduled_time }}</span>
+        </div>
+        {% endif %}
+        {% if venue_address %}
+        <div class="info-row" style="align-items:flex-start;">
+            <span class="info-label">Campus Venue</span>
+            <span class="info-val" style="font-size:12px; text-align:right; max-width:65%;">📍 {{ venue_address }}</span>
+        </div>
+        {% endif %}
+
+        {% if not already_done %}
+        <div class="email-note">
+            <i class="fas fa-paper-plane"></i>
+            Official Call Letter with resume attachment sent to <strong>{{ app.email }}</strong>.
+        </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <a href="/hr/" class="btn btn-primary"><i class="fas fa-th-list"></i> Back to HR Panel</a>
+            <a href="/admin/" class="btn btn-ghost"><i class="fas fa-cog"></i> Admin</a>
+        </div>
+    </div>
+</div>
+
+{% elif action == 'reject' %}
+<!-- Rejected state -->
+<div class="card">
+    <div class="card-header rejected">
+        <div class="icon-circle rejected"><i class="fas fa-times"></i></div>
+        <h1>Application Rejected ❌</h1>
+        <p>The candidate has been notified.</p>
+    </div>
+    <div class="card-body">
+
+        {% if already_done %}
+        <div class="alert-already">
+            <i class="fas fa-info-circle"></i>
+            This application was already marked as <strong>Rejected</strong> — no changes made.
+        </div>
+        {% endif %}
+
+        <div class="info-row">
+            <span class="info-label">Candidate</span>
+            <span class="info-val">{{ app.full_name }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Applied Role</span>
+            <span class="info-val">{{ app.role }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Type</span>
+            <span class="info-val">{{ type_label }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-val" style="font-size:13px;">{{ app.email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="status-pill pill-rejected"><span>●</span> Not Selected</span>
+        </div>
+
+        {% if not already_done %}
+        <div class="email-note rejected-note">
+            <i class="fas fa-paper-plane"></i>
+            A notification email has been sent to <strong>{{ app.email }}</strong>.
+        </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <a href="/hr/" class="btn btn-primary"><i class="fas fa-th-list"></i> Back to HR Panel</a>
+            <a href="/admin/" class="btn btn-ghost"><i class="fas fa-cog"></i> Admin</a>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+</body>
+</html>
