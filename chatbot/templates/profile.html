@@ -1,0 +1,1116 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile | ZenBot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View your ZenBot profile and track your internship and job application statuses.">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2.1">
+        <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <style>
+        body {
+            display: block;
+            background: #0d1117;
+            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+            color: #c9d1d9;
+        }
+
+        .profile-wrapper {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 36px 20px 60px;
+        }
+
+        /* ── Back button ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            transition: opacity 0.2s;
+        }
+        .back-link:hover { opacity: 0.75; }
+
+        /* ── Profile hero ── */
+        .profile-hero {
+            background: linear-gradient(135deg, #161b22 0%, #1c2533 100%);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(88,166,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .profile-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            border: 3px solid rgba(88,166,255,0.4);
+            box-shadow: 0 0 20px rgba(88,166,255,0.15);
+        }
+        .profile-info h1 { font-size: 20px; font-weight: 700; color: #e6edf3; margin-bottom: 6px; }
+        .email-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.2);
+            border-radius: 20px; padding: 4px 12px;
+            font-size: 13px; color: #58a6ff;
+        }
+
+        /* ── Section heading ── */
+        .section-heading {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 16px; font-weight: 600; color: #e6edf3;
+            margin-bottom: 14px;
+        }
+        .section-heading i { color: #58a6ff; }
+
+        /* ── Application cards ── */
+        .apps-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .app-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: border-color 0.2s, transform 0.2s;
+            animation: fadeSlideIn 0.4s ease both;
+        }
+        .app-card:hover { border-color: #58a6ff33; transform: translateY(-2px); }
+
+        /* type icon */
+        .app-type-icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; flex-shrink: 0;
+        }
+        .app-type-icon.internship { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .app-type-icon.job        { background: rgba(59,130,246,0.15);  color: #60a5fa; }
+
+        .app-info { flex: 1; min-width: 0; }
+        .app-role {
+            font-size: 14px; font-weight: 600; color: #e6edf3;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+        .app-meta {
+            font-size: 12px; color: #8b949e;
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+        }
+        .app-meta span { display: flex; align-items: center; gap: 4px; }
+
+        /* status badge */
+        .status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 600; white-space: nowrap; flex-shrink: 0;
+        }
+        .status-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+        .status-pending      { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+        .status-under_review { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+        .status-shortlisted  { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+        .status-rejected     { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .status-selected     { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+
+        /* ── Remove button ── */
+        .remove-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: #8b949e;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .remove-btn:hover {
+            background: rgba(239,68,68,0.12);
+            color: #f87171;
+            border-color: rgba(239,68,68,0.25);
+        }
+        .remove-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ── Confirm dialog ── */
+        .confirm-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-overlay.show { display: flex; }
+        .confirm-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+            animation: popIn 0.2s ease;
+        }
+        .confirm-box i { font-size: 36px; color: #f87171; margin-bottom: 12px; display: block; }
+        .confirm-box h3 { font-size: 17px; color: #e6edf3; margin-bottom: 8px; }
+        .confirm-box p { font-size: 13px; color: #8b949e; margin-bottom: 22px; }
+        .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-cancel {
+            padding: 9px 22px; border-radius: 8px;
+            border: 1px solid #30363d; background: transparent;
+            color: #8b949e; font-size: 14px; font-family: 'Outfit', sans-serif;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-cancel:hover { background: #21262d; }
+        .btn-remove-confirm {
+            padding: 9px 22px; border-radius: 8px;
+            border: none; background: #b91c1c;
+            color: #fff; font-size: 14px; font-family: 'Outfit', sans-serif;
+            font-weight: 600; cursor: pointer; transition: background 0.2s;
+            display: flex; align-items: center; gap: 7px;
+        }
+        .btn-remove-confirm:hover { background: #dc2626; }
+
+        /* ── Toast notification ── */
+        .toast {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: #21262d; border: 1px solid #30363d;
+            color: #e6edf3; font-size: 13px; font-weight: 500;
+            padding: 10px 20px; border-radius: 10px;
+            opacity: 0; transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none; z-index: 2000;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast.success i { color: #4ade80; }
+        .toast.error   i { color: #f87171; }
+
+        /* ── Empty / skeleton ── */
+        .empty-state { text-align: center; padding: 52px 20px; color: #8b949e; }
+        .empty-state i { font-size: 44px; color: #30363d; margin-bottom: 14px; display: block; }
+        .empty-state p { font-size: 14px; margin-bottom: 18px; }
+        .empty-state a {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #1f6feb; color: #fff;
+            padding: 9px 20px; border-radius: 8px;
+            text-decoration: none; font-size: 13px; font-weight: 600;
+            transition: background 0.2s;
+        }
+        .empty-state a:hover { background: #388bfd; }
+
+        .skeleton-card {
+            background: #161b22; border: 1px solid #30363d;
+            border-radius: 12px; padding: 16px 20px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .sk { border-radius: 6px; background: linear-gradient(90deg,#21262d 25%,#2d333b 50%,#21262d 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+        .sk-circle { width:42px; height:42px; border-radius:10px; flex-shrink:0; }
+        .sk-lines  { flex:1; display:flex; flex-direction:column; gap:8px; }
+        .sk-line   { height:11px; } .sk-line.s { width:45%; }
+        .sk-badge  { width:88px; height:26px; border-radius:20px; flex-shrink:0; }
+
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes fadeSlideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+
+        /* ── Status Modal ── */
+        .status-modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+        .status-modal-overlay.show { display: flex; }
+        .status-modal {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 660px;
+            width: 100%;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+            margin: auto;
+        }
+        .status-modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #21262d;
+            background: #161b22;
+            display: flex; align-items: center; justify-content: space-between; gap: 14px;
+            flex-shrink: 0;
+        }
+        .status-modal-title { font-size: 16px; font-weight: 700; color: #f0f6fc; margin: 0 0 4px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .status-modal-sub   { font-size: 12px; color: #8b949e; margin: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .status-modal-close {
+            background: rgba(255,255,255,0.05); border: 1px solid #30363d; color: #8b949e;
+            font-size: 14px; cursor: pointer; flex-shrink: 0;
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .status-modal-close:hover { background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+        .status-modal-body {
+            padding: 22px 24px 28px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .status-modal-body::-webkit-scrollbar { width: 6px; }
+        .status-modal-body::-webkit-scrollbar-track { background: transparent; }
+        .status-modal-body::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+        .status-modal-body::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+        /* ── Progress Card ── */
+        .sm-section-title {
+            font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+            color: #8b949e; margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+        }
+        .sm-section-title.accent { color: #38bdf8; }
+        .sm-progress-box {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 18px 20px 6px;
+            margin-bottom: 22px;
+        }
+
+        /* ── HR Message Card Styling ── */
+        .sm-msg-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: border-color 0.2s;
+        }
+        .sm-msg-card:hover { border-color: #388bfd; }
+        .sm-msg-header {
+            background: linear-gradient(135deg, rgba(31,111,235,0.12), rgba(56,189,248,0.06));
+            border-bottom: 1px solid rgba(56,189,248,0.18);
+            padding: 14px 18px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+        }
+        .sm-msg-title {
+            font-size: 14px; font-weight: 600; color: #58a6ff;
+            display: flex; align-items: center; gap: 9px; flex: 1;
+        }
+        .sm-msg-title i { font-size: 15px; color: #38bdf8; flex-shrink: 0; }
+        .sm-msg-time {
+            font-size: 11px; color: #8b949e; white-space: nowrap;
+            background: rgba(0,0,0,0.25); padding: 3px 8px; border-radius: 6px;
+        }
+        .sm-msg-body { padding: 18px 20px; }
+        .sm-intro-text {
+            font-size: 14px; line-height: 1.6; color: #e6edf3;
+            margin-bottom: 16px;
+        }
+        .sm-general-text p {
+            font-size: 13.5px; line-height: 1.65; color: #c9d1d9;
+            margin: 0 0 10px;
+        }
+        .sm-general-text p:last-child { margin-bottom: 0; }
+
+        /* ── Interview Rounds Breakdown ── */
+        .sm-rounds-card {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .sm-rounds-header {
+            font-size: 12px; font-weight: 700; color: #58a6ff;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 7px;
+        }
+        .sm-rounds-tag {
+            background: rgba(56,139,253,0.15); color: #58a6ff;
+            font-size: 11px; font-weight: 600; text-transform: none;
+            padding: 2px 8px; border-radius: 12px; margin-left: auto;
+        }
+        .sm-rounds-list { display: flex; flex-direction: column; gap: 8px; }
+        .sm-round-row {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-left: 3px solid #10b981;
+            border-radius: 8px;
+            padding: 9px 12px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        }
+        .sm-round-left {
+            display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px;
+        }
+        .sm-round-badge {
+            font-size: 11px; font-weight: 700; color: #34d399;
+            background: rgba(16,185,129,0.12); padding: 2px 7px; border-radius: 6px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .sm-round-name {
+            font-size: 13px; font-weight: 500; color: #f0f6fc;
+        }
+        .sm-round-dur {
+            font-size: 11px; font-weight: 600; color: #8b949e;
+            background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 10px;
+            white-space: nowrap; display: flex; align-items: center; gap: 5px;
+        }
+
+        /* ── Schedule & Venue Logistics Card ── */
+        .sm-logistics-card {
+            background: rgba(16,185,129,0.05);
+            border: 1px solid rgba(16,185,129,0.22);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .sm-logistics-header {
+            font-size: 12px; font-weight: 700; color: #34d399;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+        }
+        .sm-logistics-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
+        }
+        .sm-logistics-item { display: flex; flex-direction: column; gap: 4px; }
+        .sm-logistics-item.full-width { grid-column: 1 / -1; }
+        .sm-logistics-label {
+            font-size: 11px; font-weight: 600; color: #8b949e;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .sm-logistics-value { font-size: 13px; color: #e6edf3; line-height: 1.45; }
+        .sm-logistics-value.highlight-time { color: #34d399; font-weight: 700; font-size: 14px; }
+        .sm-mode-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(56,189,248,0.12); color: #38bdf8;
+            border: 1px solid rgba(56,189,248,0.25);
+            padding: 2px 9px; border-radius: 12px; font-size: 11.5px; font-weight: 600;
+        }
+        .sm-venue-box {
+            background: #0d1117; border: 1px solid #21262d; border-radius: 6px;
+            padding: 8px 12px; font-size: 12.5px; color: #e2e8f0; line-height: 1.5;
+            margin-top: 3px;
+        }
+
+        /* ── Special Instructions Box ── */
+        .sm-instructions-card {
+            background: rgba(245,158,11,0.07);
+            border: 1px solid rgba(245,158,11,0.22);
+            border-left: 3px solid #f59e0b;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 16px;
+        }
+        .sm-instructions-header {
+            font-size: 11px; font-weight: 700; color: #f59e0b;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+        }
+        .sm-instructions-text {
+            font-size: 12.5px; color: #fde68a; line-height: 1.55;
+        }
+
+        /* ── Actions Row ── */
+        .sm-actions-row {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            margin-top: 14px; padding-top: 14px; border-top: 1px solid #21262d;
+        }
+        .sm-btn-cal {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
+            color: #ffffff !important;
+            padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+            text-decoration: none; transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+        }
+        .sm-btn-cal:hover {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+        }
+        .sm-btn-meet {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: #16a34a; color: #ffffff !important;
+            padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600;
+            text-decoration: none; transition: all 0.2s;
+        }
+        .sm-btn-meet:hover { background: #15803d; transform: translateY(-1px); }
+        .sm-note-resume {
+            font-size: 11.5px; color: #8b949e; display: inline-flex; align-items: center; gap: 5px; margin-left: auto;
+        }
+
+        /* ── Timeline ── */
+        .timeline { display: flex; flex-direction: column; gap: 0; }
+        .tl-item {
+            display: flex; align-items: flex-start; gap: 14px;
+            position: relative;
+        }
+        .tl-item:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 15px; top: 34px;
+            width: 2px; height: calc(100% - 14px);
+            background: #21262d;
+            z-index: 0;
+        }
+        .tl-item.tl-done:not(:last-child)::before  { background: #1f6feb; }
+        .tl-item.tl-rejected:not(:last-child)::before { background: #b91c1c; }
+
+        .tl-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; flex-shrink: 0; position: relative; z-index: 1;
+            border: 2px solid #30363d;
+            background: #161b22; color: #8b949e;
+        }
+        .tl-item.tl-done     .tl-dot { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+        .tl-item.tl-current  .tl-dot { background: #f59e0b; border-color: #f59e0b; color: #fff; box-shadow: 0 0 0 4px rgba(245,158,11,0.2); }
+        .tl-item.tl-selected .tl-dot { background: #22c55e; border-color: #22c55e; color: #fff; box-shadow: 0 0 0 4px rgba(34,197,94,0.2); }
+        .tl-item.tl-rejected .tl-dot { background: #ef4444; border-color: #ef4444; color: #fff; box-shadow: 0 0 0 4px rgba(239,68,68,0.2); }
+
+        .tl-content { padding: 4px 0 22px; flex: 1; }
+        .tl-label {
+            font-size: 13px; font-weight: 600; color: #8b949e;
+            margin: 0 0 2px;
+        }
+        .tl-item.tl-done     .tl-label,
+        .tl-item.tl-current  .tl-label { color: #e6edf3; }
+        .tl-item.tl-selected .tl-label { color: #4ade80; }
+        .tl-item.tl-rejected .tl-label { color: #f87171; }
+        .tl-desc { font-size: 11px; color: #8b949e; margin: 0; }
+
+        /* status badge clickable */
+        .status-badge { cursor: pointer; }
+        .status-badge:hover { opacity: 0.85; transform: scale(1.04); }
+    </style>
+</head>
+<body>
+
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <i class="fas fa-trash-alt"></i>
+        <h3>Remove Application?</h3>
+        <p>This will permanently delete this application record. This action cannot be undone.</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" id="cancelBtn">Cancel</button>
+            <button class="btn-remove-confirm" id="confirmDeleteBtn">
+                <i class="fas fa-trash"></i> Remove
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Status Detail Modal -->
+<div class="status-modal-overlay" id="statusModalOverlay">
+    <div class="status-modal">
+        <div class="status-modal-header">
+            <div>
+                <div class="status-modal-title" id="smTitle">Application Status</div>
+                <div class="status-modal-sub" id="smSub">Applied on —</div>
+            </div>
+            <button class="status-modal-close" id="statusModalClose" title="Close (Esc)"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="status-modal-body">
+            <div class="sm-section-title"><i class="fas fa-route"></i> Application Progress</div>
+            <div class="sm-progress-box">
+                <div class="timeline" id="smTimeline"></div>
+            </div>
+            <div id="smMessages"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<div class="profile-wrapper">
+
+    <!-- Back -->
+    <a href="/chat/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Chat
+    </a>
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+        <div class="profile-avatar">👤</div>
+        <div class="profile-info">
+            <h1 id="profName">Loading…</h1>
+            <span class="email-badge">
+                <i class="fas fa-envelope" style="font-size:11px;"></i>
+                <span id="profEmail">…</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Applications Section -->
+    <div class="section-heading">
+        <i class="fas fa-file-alt"></i>
+        My Applications
+        <span id="appCount" style="font-size:13px;font-weight:500;color:#8b949e;margin-left:2px;"></span>
+    </div>
+
+    <div class="apps-list" id="appsList">
+        <div class="skeleton-card"><div class="sk sk-circle"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div><div class="sk sk-badge"></div></div>
+        <div class="skeleton-card"><div class="sk sk-circle"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div><div class="sk sk-badge"></div></div>
+        <div class="skeleton-card"><div class="sk sk-circle"></div><div class="sk-lines"><div class="sk sk-line"></div><div class="sk sk-line s"></div></div><div class="sk sk-badge"></div></div>
+    </div>
+
+</div>
+
+<script type="module" src="{% static 'js/auth_session.js' %}"></script>
+
+<script>
+    // ── Pending delete target ─────────────────────────────────────
+    let _pendingDelete = null; // { id, type, cardEl, btn }
+    // ── App data store (avoids JSON.stringify in onclick attrs) ───
+    const _appMap = {}; // key: "id-type" => app object
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function esc(s) {
+        return String(s)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showToast(msg, isError = false) {
+        const t  = document.getElementById('toast');
+        const ic = t.querySelector('i');
+        document.getElementById('toastMsg').textContent = msg;
+        t.className = 'toast ' + (isError ? 'error' : 'success');
+        ic.className = isError ? 'fas fa-exclamation-circle' : 'fas fa-check-circle';
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function buildCard(app, index) {
+        const isInternship = app.type === 'Internship';
+        const icon      = isInternship ? 'fa-graduation-cap' : 'fa-briefcase';
+        const typeClass = isInternship ? 'internship' : 'job';
+        const sk        = app.status || 'pending';
+        const mapKey    = `${app.id}-${app.type}`;
+        _appMap[mapKey] = app;  // store for safe retrieval
+
+        return `
+        <div class="app-card" id="card-${esc(app.id)}-${esc(app.type)}" style="animation-delay:${index*0.06}s">
+            <div class="app-type-icon ${typeClass}">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="app-info">
+                <div class="app-role">${esc(app.role)}</div>
+                <div class="app-meta">
+                    <span><i class="fas fa-tag"></i> ${esc(app.type)}</span>
+                    <span><i class="fas fa-calendar-alt"></i> ${esc(app.applied_at)}</span>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+                ${(app.messages && app.messages.length > 0) ? `
+                    <span style="background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); padding:4px 9px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer;" onclick="showStatusModal('${mapKey}')" title="HR Messages / Interview Details">
+                        <i class="fas fa-bell"></i> ${app.messages.length} Update${app.messages.length > 1 ? 's' : ''}
+                    </span>` : ''}
+                <div class="status-badge status-${sk}"
+                     onclick="showStatusModal('${mapKey}')"
+                     title="Click to view status timeline">
+                    <span class="dot"></span>${esc(app.status_display)}
+                </div>
+            </div>
+            <button class="remove-btn"
+                    id="delbtn-${esc(app.id)}-${esc(app.type)}"
+                    title="Remove application"
+                    onclick="askRemove(${app.id}, '${esc(app.type.toLowerCase())}', this)">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>`;
+    }
+
+    // ── Load profile ──────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('profName').textContent  = localStorage.getItem('userName')  || 'User';
+        document.getElementById('profEmail').textContent = localStorage.getItem('userEmail') || 'Not provided';
+        loadApplications();
+
+        window.addEventListener('firebaseAuthReady', () => {
+            loadApplications();
+        });
+
+        // 30s silent background auto-refresh
+        setInterval(() => {
+            if (!document.hidden && !document.getElementById('statusModalOverlay').classList.contains('show')) {
+                loadApplications();
+            }
+        }, 30000);
+    });
+
+    // ── Fetch applications ─────────────────────────────────────────
+    async function loadApplications() {
+        let token = localStorage.getItem('firebaseToken');
+        const list  = document.getElementById('appsList');
+        const countEl = document.getElementById('appCount');
+
+        if (!token) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-lock"></i>
+                    <p>Please log in to view your applications.</p>
+                    <a href="/login/"><i class="fas fa-sign-in-alt"></i> Log In</a>
+                </div>`;
+            return;
+        }
+
+        try {
+            let res  = await fetch('/my-applications/', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.status === 401 && window.refreshFirebaseAuthToken) {
+                const refreshed = await window.refreshFirebaseAuthToken(true);
+                if (refreshed && refreshed !== token) {
+                    token = refreshed;
+                    res = await fetch('/my-applications/', { headers: { 'Authorization': 'Bearer ' + token } });
+                }
+            }
+            if (res.status === 401) {
+                localStorage.removeItem('firebaseToken');
+                window.location.href = '/login/?next=/profile/';
+                return;
+            }
+            if (!res.ok) throw new Error('fetch failed');
+            const data = await res.json();
+            const apps = data.applications || [];
+
+            if (apps.length === 0) {
+                countEl.textContent = '';
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>You haven't applied for any positions yet.</p>
+                        <a href="/chat/"><i class="fas fa-robot"></i> Talk to ZenBot</a>
+                    </div>`;
+                return;
+            }
+
+            countEl.textContent = `(${apps.length})`;
+            list.innerHTML = apps.map((app, i) => buildCard(app, i)).join('');
+
+        } catch (_) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Could not load your applications. Please try again.</p>
+                    <a href="javascript:loadApplications()"><i class="fas fa-redo"></i> Retry</a>
+                </div>`;
+        }
+    }
+
+    // ── Ask confirmation before delete ────────────────────────────
+    function askRemove(id, type, btnEl) {
+        _pendingDelete = { id, type, btnEl };
+        document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    document.getElementById('cancelBtn').onclick = () => {
+        _pendingDelete = null;
+        document.getElementById('confirmOverlay').classList.remove('show');
+    };
+
+    document.getElementById('confirmOverlay').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('confirmOverlay')) {
+            _pendingDelete = null;
+            document.getElementById('confirmOverlay').classList.remove('show');
+        }
+    });
+
+    // ── Confirm delete ────────────────────────────────────────────
+    document.getElementById('confirmDeleteBtn').onclick = async () => {
+        if (!_pendingDelete) return;
+
+        const { id, type, btnEl } = _pendingDelete;
+        _pendingDelete = null;
+        document.getElementById('confirmOverlay').classList.remove('show');
+
+        const token = localStorage.getItem('firebaseToken');
+        if (!token) { showToast('Not authenticated', true); return; }
+
+        btnEl.disabled = true;
+        btnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            const res = await fetch('/delete-application/', {
+                method:  'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type':  'application/json',
+                },
+                body: JSON.stringify({ id, type }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.error || 'Delete failed');
+            }
+
+            // Animate card out then remove
+            const cardId = `card-${id}-${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            const card   = document.getElementById(cardId);
+            if (card) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s, max-height 0.4s';
+                card.style.opacity    = '0';
+                card.style.transform  = 'translateX(20px)';
+                card.style.maxHeight  = '0';
+                card.style.overflow   = 'hidden';
+                card.style.padding    = '0';
+                card.style.margin     = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // Update count
+                    const remaining = document.querySelectorAll('.app-card').length;
+                    const countEl   = document.getElementById('appCount');
+                    if (remaining === 0) {
+                        countEl.textContent = '';
+                        document.getElementById('appsList').innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-folder-open"></i>
+                                <p>You haven't applied for any positions yet.</p>
+                                <a href="/chat/"><i class="fas fa-robot"></i> Talk to ZenBot</a>
+                            </div>`;
+                    } else {
+                        countEl.textContent = `(${remaining})`;
+                    }
+                }, 400);
+            }
+
+            showToast('Application removed successfully.');
+
+        } catch (err) {
+            btnEl.disabled = false;
+            btnEl.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            showToast(err.message || 'Could not remove application.', true);
+        }
+    };
+
+    // ── Status Modal ──────────────────────────────────────────────
+    const STATUS_STEPS = [
+        { key: 'pending',      label: 'Pending',      icon: 'fa-clock',        desc: 'Application received and awaiting review.' },
+        { key: 'under_review', label: 'Under Review', icon: 'fa-search',       desc: 'Our HR team is reviewing your profile.' },
+        { key: 'shortlisted',  label: 'Shortlisted',  icon: 'fa-star',         desc: 'You have been shortlisted for next rounds.' },
+    ];
+    const FINAL_SELECTED = { key: 'selected',  label: 'Selected', icon: 'fa-check-circle', desc: 'Congratulations! You have been selected.' };
+    const FINAL_REJECTED = { key: 'rejected',  label: 'Not Selected', icon: 'fa-times-circle', desc: 'We regret to inform you that we will not be proceeding.' };
+
+    function renderCandidateMessage(m) {
+        const raw = (m.message || '').trim();
+        const isCallLetter = raw.includes('Interview Structure:') || raw.includes('• Round') || (m.subject && m.subject.toLowerCase().includes('call letter'));
+
+        if (isCallLetter) {
+            let introText = '';
+            let roundsText = '';
+            let rounds = [];
+            let scheduledTime = m.scheduled_time || '';
+            let mode = 'Direct In-Person Interview (No Online / Virtual)';
+            let venueAddress = m.venue_address || '';
+            let instructions = [];
+
+            const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+            let inRounds = false;
+
+            lines.forEach(line => {
+                if (line.includes('Interview Structure:')) {
+                    inRounds = true;
+                    const mStr = line.match(/Interview Structure:\s*(.*)/i);
+                    if (mStr) roundsText = mStr[1].trim();
+                } else if (inRounds && (line.startsWith('•') || line.startsWith('Round') || line.startsWith('-'))) {
+                    rounds.push(line.replace(/^[•\-\*]\s*/, ''));
+                } else if (line.startsWith('📅') || line.startsWith('🗓') || line.toLowerCase().includes('scheduled date & time:') || line.toLowerCase().includes('interview time:')) {
+                    inRounds = false;
+                    const mTime = line.match(/(?:Scheduled Date & Time|Interview Time|Date & Time):\s*(.*)/i);
+                    if (mTime && !scheduledTime) scheduledTime = mTime[1].trim();
+                } else if (line.startsWith('🏢') || line.toLowerCase().includes('mode:')) {
+                    inRounds = false;
+                    const mMode = line.match(/Mode:\s*(.*)/i);
+                    if (mMode) mode = mMode[1].trim();
+                } else if (line.startsWith('📍') || line.toLowerCase().includes('campus venue') || line.toLowerCase().includes('venue address')) {
+                    inRounds = false;
+                    const mVen = line.match(/(?:Company Campus Venue|In-Person Campus Venue|Campus Venue Address|Venue Address|Campus Venue):\s*(.*)/i);
+                    if (mVen && !venueAddress) venueAddress = mVen[1].trim();
+                } else if (line.toLowerCase().startsWith('special instructions:') || line.toLowerCase().startsWith('important:')) {
+                    inRounds = false;
+                    const cleanInst = line.replace(/^(?:Special Instructions|Important):\s*/i, '').trim();
+                    const isDuplicate = instructions.some(existing => {
+                        const s1 = existing.toLowerCase().slice(0, 35);
+                        const s2 = cleanInst.toLowerCase().slice(0, 35);
+                        return s1.includes(s2) || s2.includes(s1);
+                    });
+                    if (cleanInst && !isDuplicate) {
+                        instructions.push(cleanInst);
+                    }
+                } else if (!inRounds && !line.toLowerCase().includes('interview time:') && !line.toLowerCase().includes('campus venue:')) {
+                    if (!introText) introText = line;
+                    else introText += ' ' + line;
+                }
+            });
+
+            if (m.scheduled_time) scheduledTime = m.scheduled_time;
+            if (m.venue_address) venueAddress = m.venue_address;
+
+            let roundsHtml = '';
+            if (rounds.length > 0) {
+                roundsHtml = `
+                <div class="sm-rounds-card">
+                    <div class="sm-rounds-header">
+                        <i class="fas fa-layer-group"></i> Interview Structure
+                        ${roundsText ? `<span class="sm-rounds-tag">${esc(roundsText)}</span>` : ''}
+                    </div>
+                    <div class="sm-rounds-list">
+                        ${rounds.map((r, idx) => {
+                            let durMatch = r.match(/\((.*?)\)$/);
+                            let dur = durMatch ? durMatch[1] : '';
+                            let name = r.replace(/\(.*?\)$/, '').trim();
+                            let rNum = `Round ${idx + 1}`;
+                            let numMatch = name.match(/^(Round\s*\d+):?\s*(.*)/i);
+                            if (numMatch) {
+                                rNum = numMatch[1];
+                                name = numMatch[2] || name;
+                            }
+                            return `
+                            <div class="sm-round-row">
+                                <div class="sm-round-left">
+                                    <span class="sm-round-badge">${esc(rNum)}</span>
+                                    <span class="sm-round-name">${esc(name)}</span>
+                                </div>
+                                ${dur ? `<div class="sm-round-dur"><i class="far fa-clock"></i> ${esc(dur)}</div>` : ''}
+                            </div>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            }
+
+            let logisticsHtml = '';
+            if (scheduledTime || venueAddress) {
+                logisticsHtml = `
+                <div class="sm-logistics-card">
+                    <div class="sm-logistics-header">
+                        <i class="fas fa-calendar-check"></i> In-Person Interview Schedule & Venue
+                    </div>
+                    <div class="sm-logistics-grid">
+                        ${scheduledTime ? `
+                        <div class="sm-logistics-item">
+                            <span class="sm-logistics-label"><i class="fas fa-clock"></i> Date & Time</span>
+                            <span class="sm-logistics-value highlight-time">${esc(scheduledTime)}</span>
+                        </div>` : ''}
+                        <div class="sm-logistics-item">
+                            <span class="sm-logistics-label"><i class="fas fa-building"></i> Interview Mode</span>
+                            <span class="sm-logistics-value">
+                                <span class="sm-mode-pill">${esc(mode)}</span>
+                            </span>
+                        </div>
+                        ${venueAddress ? `
+                        <div class="sm-logistics-item full-width">
+                            <span class="sm-logistics-label"><i class="fas fa-map-marker-alt"></i> Company Campus Venue</span>
+                            <div class="sm-venue-box">${esc(venueAddress)}</div>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            let instructionsHtml = '';
+            if (instructions.length > 0) {
+                instructionsHtml = `
+                <div class="sm-instructions-card">
+                    <div class="sm-instructions-header"><i class="fas fa-exclamation-triangle"></i> Instructions for Candidate</div>
+                    <div class="sm-instructions-text">
+                        ${instructions.map(i => `<div style="margin-bottom:4px;">${esc(i)}</div>`).join('')}
+                    </div>
+                </div>`;
+            }
+
+            return `
+            <div class="sm-msg-card">
+                <div class="sm-msg-header">
+                    <div class="sm-msg-title">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span>${esc(m.subject)}</span>
+                    </div>
+                    <span class="sm-msg-time"><i class="far fa-clock"></i> ${esc(m.created_at)}</span>
+                </div>
+                <div class="sm-msg-body">
+                    ${introText ? `<div class="sm-intro-text">${esc(introText)}</div>` : ''}
+                    ${roundsHtml}
+                    ${logisticsHtml}
+                    ${instructionsHtml}
+                    <div class="sm-actions-row">
+                        ${m.calendar_link ? `
+                            <a href="${esc(m.calendar_link)}" target="_blank" class="sm-btn-cal">
+                                <i class="fas fa-calendar-plus"></i> Add to Google Calendar
+                            </a>` : ''}
+                        ${(!m.venue_address && m.meeting_link) ? `
+                            <a href="${esc(m.meeting_link)}" target="_blank" class="sm-btn-meet">
+                                <i class="fas fa-video"></i> Join Meeting
+                            </a>` : ''}
+                        <span class="sm-note-resume">
+                            <i class="fas fa-file-pdf"></i> Call letter & resume sent to your email
+                        </span>
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            // General HR Message
+            let paragraphs = raw.split('\n\n').filter(Boolean);
+            let logisticsHtml = '';
+            if (m.scheduled_time || m.venue_address) {
+                logisticsHtml = `
+                <div class="sm-logistics-card" style="margin-top:14px;">
+                    <div class="sm-logistics-header">
+                        <i class="fas fa-calendar-check"></i> Interview Schedule & Venue
+                    </div>
+                    <div class="sm-logistics-grid">
+                        ${m.scheduled_time ? `
+                        <div class="sm-logistics-item">
+                            <span class="sm-logistics-label"><i class="fas fa-clock"></i> Date & Time</span>
+                            <span class="sm-logistics-value highlight-time">${esc(m.scheduled_time)}</span>
+                        </div>` : ''}
+                        ${m.venue_address ? `
+                        <div class="sm-logistics-item full-width">
+                            <span class="sm-logistics-label"><i class="fas fa-map-marker-alt"></i> Company Campus Venue</span>
+                            <div class="sm-venue-box">${esc(m.venue_address)}</div>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+            }
+
+            return `
+            <div class="sm-msg-card">
+                <div class="sm-msg-header">
+                    <div class="sm-msg-title">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>${esc(m.subject)}</span>
+                    </div>
+                    <span class="sm-msg-time"><i class="far fa-clock"></i> ${esc(m.created_at)}</span>
+                </div>
+                <div class="sm-msg-body">
+                    <div class="sm-general-text">
+                        ${paragraphs.map(p => `<p>${esc(p)}</p>`).join('')}
+                    </div>
+                    ${logisticsHtml}
+                    ${m.calendar_link ? `
+                        <div class="sm-actions-row">
+                            <a href="${esc(m.calendar_link)}" target="_blank" class="sm-btn-cal">
+                                <i class="fas fa-calendar-plus"></i> Add to Google Calendar
+                            </a>
+                        </div>` : ''}
+                </div>
+            </div>`;
+        }
+    }
+
+    function showStatusModal(mapKey) {
+        const app = _appMap[mapKey];
+        if (!app) return;
+        const overlay = document.getElementById('statusModalOverlay');
+
+        const typeBadge = `<span style="font-size:11px; padding:2px 8px; border-radius:12px; font-weight:600; background:${app.type === 'Internship' ? 'rgba(168,85,247,0.15)' : 'rgba(31,111,235,0.15)'}; color:${app.type === 'Internship' ? '#c084fc' : '#58a6ff'}; border:1px solid ${app.type === 'Internship' ? 'rgba(168,85,247,0.3)' : 'rgba(31,111,235,0.3)'};">${esc(app.type)}</span>`;
+
+        document.getElementById('smTitle').innerHTML = `<span>${esc(app.role)}</span> ${typeBadge}`;
+        document.getElementById('smSub').innerHTML = `<span><i class="fas fa-calendar-alt"></i> Applied on ${esc(app.applied_at)}</span> &nbsp;·&nbsp; <span class="status-badge status-${esc(app.status || 'pending')}" style="padding:2px 8px; font-size:11px; cursor:default;"><span class="dot"></span>${esc(app.status_display)}</span>`;
+
+        const currentStatus = app.status;
+        const isRejected = currentStatus === 'rejected';
+        const isSelected = currentStatus === 'selected';
+
+        // Build steps
+        const steps = [...STATUS_STEPS];
+        if (isRejected) steps.push(FINAL_REJECTED);
+        else            steps.push(FINAL_SELECTED);
+
+        // Find current step index
+        const currentIdx = steps.findIndex(s => s.key === currentStatus);
+
+        const html = steps.map((step, idx) => {
+            let cls = '';
+            if (step.key === 'selected' && isSelected)  cls = 'tl-selected';
+            else if (step.key === 'rejected' && isRejected) cls = 'tl-rejected';
+            else if (idx < currentIdx)  cls = 'tl-done';
+            else if (idx === currentIdx) cls = 'tl-current';
+
+            return `
+            <div class="tl-item ${cls}">
+                <div class="tl-dot"><i class="fas ${step.icon}"></i></div>
+                <div class="tl-content">
+                    <p class="tl-label">${esc(step.label)}</p>
+                    <p class="tl-desc">${esc(step.desc)}</p>
+                </div>
+            </div>`;
+        }).join('');
+
+        document.getElementById('smTimeline').innerHTML = html;
+
+        // Render HR Messages & Interview Schedule
+        const msgs = app.messages || [];
+        const msgEl = document.getElementById('smMessages');
+        if (msgEl) {
+            if (msgs.length > 0) {
+                msgEl.innerHTML = `
+                <div style="margin-top:22px;">
+                    <div class="sm-section-title accent">
+                        <i class="fas fa-bell"></i> HR Messages & Interview Updates (${msgs.length})
+                    </div>
+                    ${msgs.map(m => renderCandidateMessage(m)).join('')}
+                </div>`;
+            } else {
+                msgEl.innerHTML = '';
+            }
+        }
+
+        overlay.classList.add('show');
+    }
+
+    document.getElementById('statusModalClose').onclick = () =>
+        document.getElementById('statusModalOverlay').classList.remove('show');
+
+    document.getElementById('statusModalOverlay').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('statusModalOverlay'))
+            document.getElementById('statusModalOverlay').classList.remove('show');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.getElementById('statusModalOverlay').classList.remove('show');
+            document.getElementById('confirmOverlay').classList.remove('show');
+        }
+    });
+</script>
+
+</body>
+</html>

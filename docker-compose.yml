@@ -1,0 +1,87 @@
+# ============================================================
+#  Zenbot — Docker Compose (Local Development Stack)
+#  Disadvantage #6 fix: full dev environment in one command
+#
+#  Start everything:   docker compose up
+#  Stop everything:    docker compose down
+#  Rebuild:            docker compose up --build
+# ============================================================
+
+services:
+
+  # ── PostgreSQL Database ──────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       zenbot_db
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: zenbot_dev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis (Celery Broker + Cache) ────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Django Web App ───────────────────────────────────────────────────────────
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Override DB/Redis to point to Docker services (overrides .env)
+      DATABASE_URL: postgresql://postgres:zenbot_dev_password@db:5432/zenbot_db
+      REDIS_URL:    redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - media_data:/app/media       # Persist uploaded resumes
+      - ./logs:/app/logs            # Stream logs to host for debugging
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py createcachetable --noinput 2>/dev/null || true &&
+             python -m waitress --port=8000 --call Zenbot.wsgi:get_wsgi_application"
+
+  # ── Celery Worker (Background Tasks) ─────────────────────────────────────────
+  worker:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:zenbot_dev_password@db:5432/zenbot_db
+      REDIS_URL:    redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - media_data:/app/media
+    command: python -m celery -A Zenbot worker -l info --concurrency=2
+
+volumes:
+  postgres_data:
+  media_data:

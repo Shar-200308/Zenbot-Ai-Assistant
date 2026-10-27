@@ -1,0 +1,32 @@
+# ── Core Django ───────────────────────────────────────────────────────────────
+Django>=4.2,<5.2
+cryptography>=43.0
+python-dotenv>=1.0
+firebase-admin>=6.5
+djangorestframework>=3.15
+drf-spectacular>=0.27              # Disadvantage #2 fix: OpenAPI 3.0 schema + Swagger UI at /api/docs/
+PyPDF2>=3.0
+waitress>=3.0                     # Production WSGI server (Windows-compatible)
+
+# ── AI / LLM ──────────────────────────────────────────────────────────────────
+google-generativeai>=0.8          # google.genai SDK (used by _fast_gemini_json)
+langchain>=0.3
+langchain-google-genai>=2.0       # Google Gemini embeddings + LLM
+langchain-chroma>=0.2             # ChromaDB vector store
+langchain-community>=0.3          # TextLoader, etc.
+langchain-text-splitters>=0.3
+chromadb>=0.5
+
+# ── Storage ───────────────────────────────────────────────────────────────────
+django-storages>=1.14             # Cloud storage backends
+cloudinary>=1.36                  # Cloudinary SDK (auto-used if CLOUDINARY_URL is set)
+
+# ── Database ──────────────────────────────────────────────────────────────────
+dj-database-url>=2.0              # Flexible DB config from DATABASE_URL env var
+psycopg2-binary>=2.9              # PostgreSQL driver
+
+# ── Background Tasks ──────────────────────────────────────────────────────────
+celery>=5.3
+django-celery-results>=2.5        # Store Celery task results in Django DB
+redis>=5.0                        # BUG-15 fix: Celery broker (required — was missing)
+django-redis>=5.4                 # BUG-15 fix: Redis-backed Django cache backend

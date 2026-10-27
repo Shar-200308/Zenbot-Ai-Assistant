@@ -1,0 +1,16 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Hide the 'Recent actions' sidebar from the admin dashboard */
+    #content-related {
+        display: none !important;
+    }
+    
+    /* Make the main content take the full width */
+    .colMS {
+        margin-right: 0 !important;
+    }
+</style>
+{% endblock %}

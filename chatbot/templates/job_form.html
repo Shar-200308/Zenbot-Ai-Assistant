@@ -1,0 +1,1677 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application | ZenBot</title>
+    <meta name="description" content="Apply for a job at Zensar Technologies via ZenBot.">
+        <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fonts/outfit.css' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px 60px;
+        }
+
+        /* ── Page wrapper ── */
+        .page-wrapper {
+            width: 100%;
+            max-width: 560px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* ── Back link ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+        .back-link:hover { opacity: 0.75; }
+
+        /* ── Form card ── */
+        .form-container {
+            width: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 36px 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e6edf3;
+            font-size: 20px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: rgba(88, 166, 255, 0.1);
+            color: #58a6ff;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            border: 1px solid rgba(88, 166, 255, 0.3);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            color: #8b949e;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 11px 14px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #c9d1d9;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+            appearance: none;
+        }
+
+        .input-group select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 14px) center;
+            padding-right: 38px;
+        }
+
+        .input-group input[type="file"] {
+            padding: 9px;
+            font-size: 13px;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-color: #58a6ff;
+        }
+
+        .input-group input[readonly] {
+            background-color: #161b22;
+            color: #8b949e;
+            cursor: not-allowed;
+            border-color: #30363d;
+            user-select: none;
+        }
+        .input-group input[readonly]:focus {
+            border-color: #30363d;
+            box-shadow: none;
+        }
+        .locked-pill {
+            font-size: 11px;
+            font-weight: 500;
+            color: #58a6ff;
+            background: rgba(56, 139, 253, 0.12);
+            border: 1px solid rgba(56, 139, 253, 0.28);
+            border-radius: 12px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .field-hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+
+        .input-group optgroup {
+            background-color: #161b22;
+            color: #58a6ff;
+            font-weight: 600;
+        }
+        .input-group option {
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .submit-btn:hover  { background-color: #2ea043; }
+        .submit-btn:disabled { background-color: #30363d; cursor: not-allowed; color: #8b949e; }
+
+        .success-msg {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+            color: #3fb950;
+            font-size: 15px;
+        }
+        .error-msg {
+            display: none;
+            text-align: center;
+            margin-top: 14px;
+            color: #f85149;
+            font-size: 14px;
+        }
+
+        /* ── Status tracker card ── */
+        .status-card {
+            width: 100%;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .status-card-header {
+            padding: 16px 22px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1c2533;
+        }
+        .status-card-header i { color: #58a6ff; font-size: 15px; }
+        .status-card-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #e6edf3;
+            flex: 1;
+        }
+        .status-card-header .count-pill {
+            background: rgba(88,166,255,0.15);
+            color: #58a6ff;
+            border-radius: 12px;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* Individual row */
+        .app-row-wrap {
+            display: flex;
+            flex-direction: column;
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+            animation: fadeIn 0.35s ease both;
+        }
+        .app-row-wrap:hover { border-color: #58a6ff44; transform: translateY(-1px); }
+        .app-row-main {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 13px 14px;
+        }
+        .candidate-messages-container {
+            border-top: 1px solid #21262d;
+            background: #111822;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .candidate-message-card {
+            background: #161f2c;
+            border: 1px solid rgba(56, 139, 253, 0.25);
+            border-left: 3px solid #388bfd;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+        .c-msg-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .c-msg-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .c-msg-time {
+            font-size: 11px;
+            color: #8b949e;
+        }
+        .c-msg-body {
+            font-size: 12px;
+            color: #c9d1d9;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            margin-bottom: 8px;
+        }
+        .c-msg-interview-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .c-msg-meet-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #16a34a;
+            color: #ffffff !important;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .c-msg-meet-link:hover { background: #15803d; }
+
+        .app-row-icon {
+            width: 38px; height: 38px;
+            border-radius: 8px;
+            background: rgba(59,130,246,0.12);
+            color: #60a5fa;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .app-row-info { flex: 1; min-width: 0; }
+        .app-row-role {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 3px;
+        }
+        .app-row-date {
+            font-size: 12px;
+            color: #8b949e;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .status-badge .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .status-pending      { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+        .status-under_review { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+        .status-shortlisted  { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+        .status-rejected     { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .status-selected     { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+
+        /* Empty / Error states */
+        .state-box {
+            text-align: center;
+            padding: 28px 20px;
+            color: #8b949e;
+            font-size: 13px;
+        }
+        .state-box i { display: block; font-size: 28px; color: #30363d; margin-bottom: 10px; }
+
+        /* Skeleton */
+        .sk-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 13px 14px;
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+        }
+        .sk { border-radius: 6px; background: linear-gradient(90deg,#21262d 25%,#2d333b 50%,#21262d 75%); background-size:200% 100%; animation: shimmer 1.4s infinite; }
+        .sk-circle { width:38px; height:38px; border-radius:8px; flex-shrink:0; }
+        .sk-lines { flex:1; display:flex; flex-direction:column; gap:7px; }
+        .sk-line { height:11px; }
+        .sk-line.s { width:50%; }
+        .sk-badge { width:80px; height:24px; border-radius:20px; flex-shrink:0; }
+
+        /* ── Auto-attached resume badge ── */
+        .resume-attached-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            gap: 12px;
+            animation: fadeIn 0.25s ease;
+        }
+        .resume-att-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .resume-att-left i.fa-file-pdf {
+            font-size: 24px;
+            color: #ef4444;
+            flex-shrink: 0;
+        }
+        .resume-att-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+        .resume-att-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e6edf3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .resume-att-sub {
+            font-size: 11px;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .resume-att-badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        @keyframes fadeIn  { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── Multi-Step Wizard Styles ── */
+        .wizard-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 0 8px;
+        }
+        .wizard-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .wizard-step .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #0d1117;
+            border: 2px solid #30363d;
+            color: #8b949e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.25s ease;
+        }
+        .wizard-step .step-label {
+            font-size: 11px;
+            color: #8b949e;
+            font-weight: 500;
+            margin-top: 6px;
+            transition: color 0.25s;
+        }
+        .wizard-step.active .step-circle {
+            border-color: #58a6ff;
+            background: #1f6feb;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(88, 166, 255, 0.4);
+        }
+        .wizard-step.active .step-label {
+            color: #58a6ff;
+            font-weight: 600;
+        }
+        .wizard-step.completed .step-circle {
+            border-color: #3fb950;
+            background: #238636;
+            color: #ffffff;
+        }
+        .wizard-step.completed .step-label {
+            color: #3fb950;
+        }
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: #30363d;
+            margin: 0 8px;
+            margin-bottom: 18px;
+            transition: background 0.3s;
+        }
+        .step-line.completed {
+            background: #238636;
+        }
+        .wizard-panel {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        .wizard-panel.active {
+            display: block;
+        }
+        .wizard-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .wizard-btn {
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .wizard-btn.prev {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        .wizard-btn.prev:hover {
+            background: #30363d;
+            color: #ffffff;
+        }
+        .wizard-btn.next {
+            background: linear-gradient(135deg, #1f6feb, #388bfd);
+            border: none;
+            color: #ffffff;
+            margin-left: auto;
+        }
+        .wizard-btn.next:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 14px rgba(31, 111, 235, 0.4);
+        }
+        .wizard-summary-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+        .wizard-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            color: #8b949e;
+        }
+        .wizard-summary-row span:last-child {
+            color: #e6edf3;
+            font-weight: 500;
+        }
+    </style>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function () { emailjs.init("Q3egrNiveKf6RHtX4"); })();
+    </script>
+</head>
+
+<body>
+
+<div class="page-wrapper">
+
+    <!-- Back link -->
+    <a href="/chat/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Chat
+    </a>
+
+    <!-- ── Application Form ── -->
+    <div class="form-container">
+        <h2>Job Application</h2>
+
+        <!-- State-Wise Vacancy & Company Location Notice -->
+        <div style="background:linear-gradient(135deg, rgba(31,111,235,0.12), rgba(56,189,248,0.06)); border:1px solid rgba(56,189,248,0.28); border-radius:12px; padding:14px 18px; margin-bottom:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                <div style="font-weight:700; color:#38bdf8; font-size:13.5px; display:flex; align-items:center; gap:7px;">
+                    <i class="fas fa-building"></i> Zensar Technologies
+                </div>
+                <span style="font-size:11px; background:rgba(34,197,94,0.15); color:#4ade80; border:1px solid rgba(34,197,94,0.3); padding:2px 8px; border-radius:20px; font-weight:600;">
+                    Global HQ: Pune, Maharashtra
+                </span>
+            </div>
+            <div style="font-size:12.5px; color:#c9d1d9; line-height:1.5;">
+                <div style="background:#0d1117; padding:8px 12px; border-radius:8px; border:1px solid #21262d; font-size:12px; color:#8b949e; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                    <span><strong>Selected Role Location:</strong></span> 
+                    <span id="roleLocationBadge" style="color:#58a6ff; font-weight:600;">Loading location...</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            <label style="display:flex; align-items:center; margin-bottom:7px; font-size:13px; color:#8b949e; font-weight:500;">
+                Applying For Position
+                <span class="locked-pill"><i class="fas fa-lock"></i> Fixed to selected role</span>
+            </label>
+            <input type="text" id="roleSelect" value="{{ role }}" readonly
+                style="width:100%; padding:11px 14px; background-color:#0d1117; border:1px solid #388bfd55; border-radius:8px; color:#58a6ff; font-weight:600; font-size:14px; outline:none; font-family:'Outfit', sans-serif; cursor:not-allowed;">
+        </div>
+
+        <!-- Wizard Progress Stepper -->
+        <div class="wizard-stepper">
+            <div class="wizard-step active" id="wstep-1" onclick="goToStep(1)">
+                <div class="step-circle"><i class="fas fa-user"></i></div>
+                <div class="step-label">Personal</div>
+            </div>
+            <div class="step-line" id="wline-1"></div>
+            <div class="wizard-step" id="wstep-2" onclick="goToStep(2)">
+                <div class="step-circle"><i class="fas fa-graduation-cap"></i></div>
+                <div class="step-label">Academics</div>
+            </div>
+            <div class="step-line" id="wline-2"></div>
+            <div class="wizard-step" id="wstep-3" onclick="goToStep(3)">
+                <div class="step-circle"><i class="fas fa-file-alt"></i></div>
+                <div class="step-label">Resume & Submit</div>
+            </div>
+        </div>
+
+        <form id="applyForm">
+            <input type="hidden" id="role" value="{{ role }}">
+            <input type="hidden" id="ats_score" name="ats_score" value="">
+
+            <!-- ── STEP 1: Personal Details ── -->
+            <div class="wizard-panel active" id="stepPanel-1">
+                <div class="input-group">
+                    <label for="photo">Upload Profile Photo</label>
+                    <input type="file" id="photo" accept="image/*" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">
+                        Email Address
+                        <span class="locked-pill"><i class="fas fa-lock"></i> Locked to login account</span>
+                    </label>
+                    <input type="email" id="email" placeholder="Loading your logged-in email..." readonly required>
+                    <small class="field-hint"><i class="fas fa-shield-alt"></i> Auto-attached to your verified login email. Other emails cannot be used.</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number">
+                </div>
+
+                <div class="wizard-nav">
+                    <button type="button" class="wizard-btn next" onclick="nextStep(1)">
+                        Next: Academics & Education <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── STEP 2: Academic Qualifications ── -->
+            <div class="wizard-panel" id="stepPanel-2">
+                <div class="input-group">
+                    <label for="course">Academic Course (PG, if any)</label>
+                    <select id="course" onchange="togglePGCGPA()">
+                        <option value="" disabled selected>Select your PG course</option>
+                        <option>MCA</option>
+                        <option>MSc (Computer Science)</option>
+                    <option>ME (Computer Science)</option>
+                    <option>M.Tech (IT)</option>
+                    <option>MBA (Systems/HR)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="ug_course">UG Course</label>
+                <select id="ug_course" required>
+                    <option value="" disabled selected>Select your UG course</option>
+                    <option>BSc (Computer Science)</option>
+                    <option>BSc (Information Technology)</option>
+                    <option>BSc (Data Science)</option>
+                    <option>BSc (Artificial Intelligence)</option>
+                    <option>BSc (Cyber Security)</option>
+                    <option>BCA (Bachelor of Computer Applications)</option>
+                    <option>BE (Computer Science and Engineering)</option>
+                    <option>BE (Information Technology)</option>
+                    <option>BE (Electronics and Communication)</option>
+                    <option>B.Tech (Computer Science)</option>
+                    <option>B.Tech (Information Technology)</option>
+                    <option>B.Tech (Artificial Intelligence and Data Science)</option>
+                    <option>B.Tech (Cyber Security)</option>
+                    <option>B.Com (Computer Applications)</option>
+                    <option>B.Com (Information Systems)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="ug_college">UG College / University / Institute</label>
+                <select id="ug_college" required onchange="handleCollegeChange('ug')">
+                    <option value="" disabled selected>Select your UG College / Institute</option>
+                    <optgroup label="Premier Institutes & Central Universities">
+                        <option value="IIT Madras - Indian Institute of Technology Madras">IIT Madras - Indian Institute of Technology Madras</option>
+                        <option value="NIT Trichy - National Institute of Technology Tiruchirappalli">NIT Trichy - National Institute of Technology Tiruchirappalli</option>
+                        <option value="IIT Bombay - Indian Institute of Technology Bombay">IIT Bombay - Indian Institute of Technology Bombay</option>
+                        <option value="IIT Delhi - Indian Institute of Technology Delhi">IIT Delhi - Indian Institute of Technology Delhi</option>
+                        <option value="IISc Bangalore - Indian Institute of Science">IISc Bangalore - Indian Institute of Science</option>
+                        <option value="BITS Pilani">BITS Pilani</option>
+                        <option value="Delhi University (DU)">Delhi University (DU)</option>
+                    </optgroup>
+                    <optgroup label="Anna University & Premier Tech Colleges">
+                        <option value="CEG - College of Engineering Guindy, Anna University">CEG - College of Engineering Guindy, Anna University</option>
+                        <option value="MIT - Madras Institute of Technology, Anna University">MIT - Madras Institute of Technology, Anna University</option>
+                        <option value="Anna University, Chennai">Anna University, Chennai</option>
+                        <option value="PSG College of Technology, Coimbatore">PSG College of Technology, Coimbatore</option>
+                        <option value="Coimbatore Institute of Technology (CIT), Coimbatore">Coimbatore Institute of Technology (CIT), Coimbatore</option>
+                        <option value="GCT - Government College of Technology, Coimbatore">GCT - Government College of Technology, Coimbatore</option>
+                        <option value="Government College of Engineering (GCE), Salem">Government College of Engineering (GCE), Salem</option>
+                        <option value="Government College of Engineering (GCE), Tirunelveli">Government College of Engineering (GCE), Tirunelveli</option>
+                        <option value="Government College of Engineering (GCE), Bargur">Government College of Engineering (GCE), Bargur</option>
+                        <option value="Thiagarajar College of Engineering (TCE), Madurai">Thiagarajar College of Engineering (TCE), Madurai</option>
+                    </optgroup>
+                    <optgroup label="Top Engineering & Tech Colleges">
+                        <option value="SSN College of Engineering, Chennai">SSN College of Engineering, Chennai</option>
+                        <option value="Kumaraguru College of Technology (KCT), Coimbatore">Kumaraguru College of Technology (KCT), Coimbatore</option>
+                        <option value="Sri Krishna College of Engineering and Technology (SKCET), Coimbatore">Sri Krishna College of Engineering and Technology (SKCET), Coimbatore</option>
+                        <option value="Sri Krishna College of Technology (SKCT), Coimbatore">Sri Krishna College of Technology (SKCT), Coimbatore</option>
+                        <option value="Kongu Engineering College, Erode">Kongu Engineering College, Erode</option>
+                        <option value="Bannari Amman Institute of Technology (BIT), Sathyamangalam">Bannari Amman Institute of Technology (BIT), Sathyamangalam</option>
+                        <option value="Mepco Schlenk Engineering College, Sivakasi">Mepco Schlenk Engineering College, Sivakasi</option>
+                        <option value="Sona College of Technology, Salem">Sona College of Technology, Salem</option>
+                        <option value="Rajalakshmi Engineering College (REC), Chennai">Rajalakshmi Engineering College (REC), Chennai</option>
+                        <option value="Rajalakshmi Institute of Technology (RIT), Chennai">Rajalakshmi Institute of Technology (RIT), Chennai</option>
+                        <option value="Sri Sairam Engineering College, Chennai">Sri Sairam Engineering College, Chennai</option>
+                        <option value="Sri Venkateswara College of Engineering (SVCE), Sriperumbudur">Sri Venkateswara College of Engineering (SVCE), Sriperumbudur</option>
+                        <option value="Velammal Engineering College, Chennai">Velammal Engineering College, Chennai</option>
+                        <option value="St. Joseph's College of Engineering, Chennai">St. Joseph's College of Engineering, Chennai</option>
+                        <option value="National Engineering College, Kovilpatti">National Engineering College, Kovilpatti</option>
+                        <option value="Easwari Engineering College, Chennai">Easwari Engineering College, Chennai</option>
+                        <option value="RMK Engineering College, Chennai">RMK Engineering College, Chennai</option>
+                        <option value="RMD Engineering College, Chennai">RMD Engineering College, Chennai</option>
+                    </optgroup>
+                    <optgroup label="Deemed & State Universities">
+                        <option value="Sathyabama Institute of Science and Technology (Sathyabama University), Chennai">Sathyabama Institute of Science and Technology (Sathyabama University), Chennai</option>
+                        <option value="University of Madras, Chennai">University of Madras, Chennai</option>
+                        <option value="VIT - Vellore Institute of Technology, Vellore">VIT - Vellore Institute of Technology, Vellore</option>
+                        <option value="SRM Institute of Science and Technology, Chennai">SRM Institute of Science and Technology, Chennai</option>
+                        <option value="SASTRA Deemed University, Thanjavur">SASTRA Deemed University, Thanjavur</option>
+                        <option value="Amrita Vishwa Vidyapeetham, Coimbatore">Amrita Vishwa Vidyapeetham, Coimbatore</option>
+                        <option value="Bharathiar University, Coimbatore">Bharathiar University, Coimbatore</option>
+                        <option value="Bharathidasan University, Tiruchirappalli">Bharathidasan University, Tiruchirappalli</option>
+                        <option value="Madurai Kamaraj University, Madurai">Madurai Kamaraj University, Madurai</option>
+                        <option value="Manonmaniam Sundaranar University, Tirunelveli">Manonmaniam Sundaranar University, Tirunelveli</option>
+                        <option value="Alagappa University, Karaikudi">Alagappa University, Karaikudi</option>
+                        <option value="Periyar University, Salem">Periyar University, Salem</option>
+                        <option value="Annamalai University, Chidambaram">Annamalai University, Chidambaram</option>
+                    </optgroup>
+                    <optgroup label="Top Arts & Science Autonomous Colleges">
+                        <option value="DG Vaishnav College (D.G. Vaishnav College), Chennai">DG Vaishnav College (D.G. Vaishnav College), Chennai</option>
+                        <option value="Ramakrishna Mission Vivekananda College, Chennai">Ramakrishna Mission Vivekananda College, Chennai</option>
+                        <option value="Loyola College (Autonomous), Chennai">Loyola College (Autonomous), Chennai</option>
+                        <option value="Madras Christian College (MCC), Chennai">Madras Christian College (MCC), Chennai</option>
+                        <option value="Presidency College, Chennai">Presidency College, Chennai</option>
+                        <option value="Ethiraj College for Women (Autonomous), Chennai">Ethiraj College for Women (Autonomous), Chennai</option>
+                        <option value="Stella Maris College, Chennai">Stella Maris College, Chennai</option>
+                        <option value="Women's Christian College (WCC), Chennai">Women's Christian College (WCC), Chennai</option>
+                        <option value="The New College (Autonomous), Chennai">The New College (Autonomous), Chennai</option>
+                        <option value="Guru Nanak College (Autonomous), Chennai">Guru Nanak College (Autonomous), Chennai</option>
+                        <option value="SDNB Vaishnav College for Women, Chennai">SDNB Vaishnav College for Women, Chennai</option>
+                        <option value="PSG College of Arts and Science, Coimbatore">PSG College of Arts and Science, Coimbatore</option>
+                        <option value="St. Joseph's College (Autonomous), Tiruchirappalli">St. Joseph's College (Autonomous), Tiruchirappalli</option>
+                        <option value="Bishop Heber College, Tiruchirappalli">Bishop Heber College, Tiruchirappalli</option>
+                        <option value="Jamal Mohamed College, Tiruchirappalli">Jamal Mohamed College, Tiruchirappalli</option>
+                        <option value="Thiagarajar College (Arts & Science), Madurai">Thiagarajar College (Arts & Science), Madurai</option>
+                        <option value="American College, Madurai">American College, Madurai</option>
+                        <option value="Ayya Nadar Janaki Ammal College, Sivakasi">Ayya Nadar Janaki Ammal College, Sivakasi</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                        <option value="Other">Other College / University / Institute (Specify below)</option>
+                    </optgroup>
+                </select>
+                <div class="input-group" id="ug_madras_group" style="display:none; margin-top:8px;">
+                    <label for="ug_madras_college" style="font-size:12px; color:#58a6ff; font-weight:600;">
+                        <i class="fas fa-university"></i> Select College under University of Madras:
+                    </label>
+                    <select id="ug_madras_college" onchange="handleMadrasCollegeChange('ug')">
+                        <option value="" disabled selected>Select affiliated college (e.g. DG Vaishnav, Vivekananda...)</option>
+                        <option value="DG Vaishnav College (D.G. Vaishnav College), Arumbakkam">DG Vaishnav College (D.G. Vaishnav College), Arumbakkam</option>
+                        <option value="Ramakrishna Mission Vivekananda College, Mylapore">Ramakrishna Mission Vivekananda College, Mylapore</option>
+                        <option value="SDNB Vaishnav College for Women, Chromepet">SDNB Vaishnav College for Women, Chromepet</option>
+                        <option value="Loyola College (Autonomous), Nungambakkam">Loyola College (Autonomous), Nungambakkam</option>
+                        <option value="Madras Christian College (MCC), Tambaram">Madras Christian College (MCC), Tambaram</option>
+                        <option value="Presidency College (Autonomous), Chepauk">Presidency College (Autonomous), Chepauk</option>
+                        <option value="Ethiraj College for Women (Autonomous), Egmore">Ethiraj College for Women (Autonomous), Egmore</option>
+                        <option value="Stella Maris College (Autonomous), Cathedral Road">Stella Maris College (Autonomous), Cathedral Road</option>
+                        <option value="Women's Christian College (WCC), Nungambakkam">Women's Christian College (WCC), Nungambakkam</option>
+                        <option value="The New College (Autonomous), Royapettah">The New College (Autonomous), Royapettah</option>
+                        <option value="Guru Nanak College (Autonomous), Velachery">Guru Nanak College (Autonomous), Velachery</option>
+                        <option value="Agurchand Manmull Jain College (AM Jain College), Meenambakkam">Agurchand Manmull Jain College (AM Jain College), Meenambakkam</option>
+                        <option value="Pachaiyappa's College, Chetpet">Pachaiyappa's College, Chetpet</option>
+                        <option value="Justice Basheer Ahmed Sayeed College (JBAS / SIET), Teynampet">Justice Basheer Ahmed Sayeed College (JBAS / SIET), Teynampet</option>
+                        <option value="Meenakshi College for Women (Autonomous), Kodambakkam">Meenakshi College for Women (Autonomous), Kodambakkam</option>
+                        <option value="Patrician College of Arts and Science, Adyar">Patrician College of Arts and Science, Adyar</option>
+                        <option value="Madras School of Social Work (MSSW), Egmore">Madras School of Social Work (MSSW), Egmore</option>
+                        <option value="Queen Mary's College (Autonomous), Marina Beach">Queen Mary's College (Autonomous), Marina Beach</option>
+                        <option value="Quaid-e-Millath Government College for Women, Anna Salai">Quaid-e-Millath Government College for Women, Anna Salai</option>
+                        <option value="Alpha Arts and Science College, Porur">Alpha Arts and Science College, Porur</option>
+                        <option value="St. Thomas College of Arts and Science, Koyambedu">St. Thomas College of Arts and Science, Koyambedu</option>
+                        <option value="Sir Theagaraya College, Old Washermanpet">Sir Theagaraya College, Old Washermanpet</option>
+                        <option value="Chellammal Women's College, Guindy">Chellammal Women's College, Guindy</option>
+                        <option value="Chevalier T. Thomas Elizabeth College for Women, Perambur">Chevalier T. Thomas Elizabeth College for Women, Perambur</option>
+                        <option value="Mar Gregorios College of Arts & Science, Mogappair">Mar Gregorios College of Arts & Science, Mogappair</option>
+                        <option value="University of Madras (University Campus / Department)">University of Madras (University Campus / Department)</option>
+                        <option value="Other">Other Madras University College (Specify below)</option>
+                    </select>
+                </div>
+                <input type="text" id="ug_college_other" placeholder="Enter your College / University name" style="display:none; margin-top:8px;">
+            </div>
+
+            <div class="input-group">
+                <label for="ug_cgpa">UG CGPA</label>
+                <input type="number" step="0.01" id="ug_cgpa" placeholder="Enter UG CGPA" required>
+            </div>
+
+            <div class="input-group" id="pg_college_group" style="display:none;">
+                <label for="pg_college">PG College / University / Institute</label>
+                <select id="pg_college" onchange="handleCollegeChange('pg')">
+                    <option value="" disabled selected>Select your PG College / Institute</option>
+                    <optgroup label="Premier Institutes & Central Universities">
+                        <option value="IIT Madras - Indian Institute of Technology Madras">IIT Madras - Indian Institute of Technology Madras</option>
+                        <option value="NIT Trichy - National Institute of Technology Tiruchirappalli">NIT Trichy - National Institute of Technology Tiruchirappalli</option>
+                        <option value="IIT Bombay - Indian Institute of Technology Bombay">IIT Bombay - Indian Institute of Technology Bombay</option>
+                        <option value="IIT Delhi - Indian Institute of Technology Delhi">IIT Delhi - Indian Institute of Technology Delhi</option>
+                        <option value="IISc Bangalore - Indian Institute of Science">IISc Bangalore - Indian Institute of Science</option>
+                        <option value="BITS Pilani">BITS Pilani</option>
+                        <option value="Delhi University (DU)">Delhi University (DU)</option>
+                    </optgroup>
+                    <optgroup label="Anna University & Premier Tech Colleges">
+                        <option value="CEG - College of Engineering Guindy, Anna University">CEG - College of Engineering Guindy, Anna University</option>
+                        <option value="MIT - Madras Institute of Technology, Anna University">MIT - Madras Institute of Technology, Anna University</option>
+                        <option value="Anna University, Chennai">Anna University, Chennai</option>
+                        <option value="PSG College of Technology, Coimbatore">PSG College of Technology, Coimbatore</option>
+                        <option value="Coimbatore Institute of Technology (CIT), Coimbatore">Coimbatore Institute of Technology (CIT), Coimbatore</option>
+                        <option value="GCT - Government College of Technology, Coimbatore">GCT - Government College of Technology, Coimbatore</option>
+                        <option value="Government College of Engineering (GCE), Salem">Government College of Engineering (GCE), Salem</option>
+                        <option value="Government College of Engineering (GCE), Tirunelveli">Government College of Engineering (GCE), Tirunelveli</option>
+                        <option value="Government College of Engineering (GCE), Bargur">Government College of Engineering (GCE), Bargur</option>
+                        <option value="Thiagarajar College of Engineering (TCE), Madurai">Thiagarajar College of Engineering (TCE), Madurai</option>
+                    </optgroup>
+                    <optgroup label="Top Engineering & Tech Colleges">
+                        <option value="SSN College of Engineering, Chennai">SSN College of Engineering, Chennai</option>
+                        <option value="Kumaraguru College of Technology (KCT), Coimbatore">Kumaraguru College of Technology (KCT), Coimbatore</option>
+                        <option value="Sri Krishna College of Engineering and Technology (SKCET), Coimbatore">Sri Krishna College of Engineering and Technology (SKCET), Coimbatore</option>
+                        <option value="Sri Krishna College of Technology (SKCT), Coimbatore">Sri Krishna College of Technology (SKCT), Coimbatore</option>
+                        <option value="Kongu Engineering College, Erode">Kongu Engineering College, Erode</option>
+                        <option value="Bannari Amman Institute of Technology (BIT), Sathyamangalam">Bannari Amman Institute of Technology (BIT), Sathyamangalam</option>
+                        <option value="Mepco Schlenk Engineering College, Sivakasi">Mepco Schlenk Engineering College, Sivakasi</option>
+                        <option value="Sona College of Technology, Salem">Sona College of Technology, Salem</option>
+                        <option value="Rajalakshmi Engineering College (REC), Chennai">Rajalakshmi Engineering College (REC), Chennai</option>
+                        <option value="Rajalakshmi Institute of Technology (RIT), Chennai">Rajalakshmi Institute of Technology (RIT), Chennai</option>
+                        <option value="Sri Sairam Engineering College, Chennai">Sri Sairam Engineering College, Chennai</option>
+                        <option value="Sri Venkateswara College of Engineering (SVCE), Sriperumbudur">Sri Venkateswara College of Engineering (SVCE), Sriperumbudur</option>
+                        <option value="Velammal Engineering College, Chennai">Velammal Engineering College, Chennai</option>
+                        <option value="St. Joseph's College of Engineering, Chennai">St. Joseph's College of Engineering, Chennai</option>
+                        <option value="National Engineering College, Kovilpatti">National Engineering College, Kovilpatti</option>
+                        <option value="Easwari Engineering College, Chennai">Easwari Engineering College, Chennai</option>
+                        <option value="RMK Engineering College, Chennai">RMK Engineering College, Chennai</option>
+                        <option value="RMD Engineering College, Chennai">RMD Engineering College, Chennai</option>
+                    </optgroup>
+                    <optgroup label="Deemed & State Universities">
+                        <option value="Sathyabama Institute of Science and Technology (Sathyabama University), Chennai">Sathyabama Institute of Science and Technology (Sathyabama University), Chennai</option>
+                        <option value="University of Madras, Chennai">University of Madras, Chennai</option>
+                        <option value="VIT - Vellore Institute of Technology, Vellore">VIT - Vellore Institute of Technology, Vellore</option>
+                        <option value="SRM Institute of Science and Technology, Chennai">SRM Institute of Science and Technology, Chennai</option>
+                        <option value="SASTRA Deemed University, Thanjavur">SASTRA Deemed University, Thanjavur</option>
+                        <option value="Amrita Vishwa Vidyapeetham, Coimbatore">Amrita Vishwa Vidyapeetham, Coimbatore</option>
+                        <option value="Bharathiar University, Coimbatore">Bharathiar University, Coimbatore</option>
+                        <option value="Bharathidasan University, Tiruchirappalli">Bharathidasan University, Tiruchirappalli</option>
+                        <option value="Madurai Kamaraj University, Madurai">Madurai Kamaraj University, Madurai</option>
+                        <option value="Manonmaniam Sundaranar University, Tirunelveli">Manonmaniam Sundaranar University, Tirunelveli</option>
+                        <option value="Alagappa University, Karaikudi">Alagappa University, Karaikudi</option>
+                        <option value="Periyar University, Salem">Periyar University, Salem</option>
+                        <option value="Annamalai University, Chidambaram">Annamalai University, Chidambaram</option>
+                    </optgroup>
+                    <optgroup label="Top Arts & Science Autonomous Colleges">
+                        <option value="DG Vaishnav College (D.G. Vaishnav College), Chennai">DG Vaishnav College (D.G. Vaishnav College), Chennai</option>
+                        <option value="Ramakrishna Mission Vivekananda College, Chennai">Ramakrishna Mission Vivekananda College, Chennai</option>
+                        <option value="Loyola College (Autonomous), Chennai">Loyola College (Autonomous), Chennai</option>
+                        <option value="Madras Christian College (MCC), Chennai">Madras Christian College (MCC), Chennai</option>
+                        <option value="Presidency College, Chennai">Presidency College, Chennai</option>
+                        <option value="Ethiraj College for Women (Autonomous), Chennai">Ethiraj College for Women (Autonomous), Chennai</option>
+                        <option value="Stella Maris College, Chennai">Stella Maris College, Chennai</option>
+                        <option value="Women's Christian College (WCC), Chennai">Women's Christian College (WCC), Chennai</option>
+                        <option value="The New College (Autonomous), Chennai">The New College (Autonomous), Chennai</option>
+                        <option value="Guru Nanak College (Autonomous), Chennai">Guru Nanak College (Autonomous), Chennai</option>
+                        <option value="SDNB Vaishnav College for Women, Chennai">SDNB Vaishnav College for Women, Chennai</option>
+                        <option value="PSG College of Arts and Science, Coimbatore">PSG College of Arts and Science, Coimbatore</option>
+                        <option value="St. Joseph's College (Autonomous), Tiruchirappalli">St. Joseph's College (Autonomous), Tiruchirappalli</option>
+                        <option value="Bishop Heber College, Tiruchirappalli">Bishop Heber College, Tiruchirappalli</option>
+                        <option value="Jamal Mohamed College, Tiruchirappalli">Jamal Mohamed College, Tiruchirappalli</option>
+                        <option value="Thiagarajar College (Arts & Science), Madurai">Thiagarajar College (Arts & Science), Madurai</option>
+                        <option value="American College, Madurai">American College, Madurai</option>
+                        <option value="Ayya Nadar Janaki Ammal College, Sivakasi">Ayya Nadar Janaki Ammal College, Sivakasi</option>
+                    </optgroup>
+                    <optgroup label="Other">
+                        <option value="Other">Other College / University / Institute (Specify below)</option>
+                    </optgroup>
+                </select>
+                <div class="input-group" id="pg_madras_group" style="display:none; margin-top:8px;">
+                    <label for="pg_madras_college" style="font-size:12px; color:#58a6ff; font-weight:600;">
+                        <i class="fas fa-university"></i> Select College under University of Madras:
+                    </label>
+                    <select id="pg_madras_college" onchange="handleMadrasCollegeChange('pg')">
+                        <option value="" disabled selected>Select affiliated college (e.g. DG Vaishnav, Vivekananda...)</option>
+                        <option value="DG Vaishnav College (D.G. Vaishnav College), Arumbakkam">DG Vaishnav College (D.G. Vaishnav College), Arumbakkam</option>
+                        <option value="Ramakrishna Mission Vivekananda College, Mylapore">Ramakrishna Mission Vivekananda College, Mylapore</option>
+                        <option value="SDNB Vaishnav College for Women, Chromepet">SDNB Vaishnav College for Women, Chromepet</option>
+                        <option value="Loyola College (Autonomous), Nungambakkam">Loyola College (Autonomous), Nungambakkam</option>
+                        <option value="Madras Christian College (MCC), Tambaram">Madras Christian College (MCC), Tambaram</option>
+                        <option value="Presidency College (Autonomous), Chepauk">Presidency College (Autonomous), Chepauk</option>
+                        <option value="Ethiraj College for Women (Autonomous), Egmore">Ethiraj College for Women (Autonomous), Egmore</option>
+                        <option value="Stella Maris College (Autonomous), Cathedral Road">Stella Maris College (Autonomous), Cathedral Road</option>
+                        <option value="Women's Christian College (WCC), Nungambakkam">Women's Christian College (WCC), Nungambakkam</option>
+                        <option value="The New College (Autonomous), Royapettah">The New College (Autonomous), Royapettah</option>
+                        <option value="Guru Nanak College (Autonomous), Velachery">Guru Nanak College (Autonomous), Velachery</option>
+                        <option value="Agurchand Manmull Jain College (AM Jain College), Meenambakkam">Agurchand Manmull Jain College (AM Jain College), Meenambakkam</option>
+                        <option value="Pachaiyappa's College, Chetpet">Pachaiyappa's College, Chetpet</option>
+                        <option value="Justice Basheer Ahmed Sayeed College (JBAS / SIET), Teynampet">Justice Basheer Ahmed Sayeed College (JBAS / SIET), Teynampet</option>
+                        <option value="Meenakshi College for Women (Autonomous), Kodambakkam">Meenakshi College for Women (Autonomous), Kodambakkam</option>
+                        <option value="Patrician College of Arts and Science, Adyar">Patrician College of Arts and Science, Adyar</option>
+                        <option value="Madras School of Social Work (MSSW), Egmore">Madras School of Social Work (MSSW), Egmore</option>
+                        <option value="Queen Mary's College (Autonomous), Marina Beach">Queen Mary's College (Autonomous), Marina Beach</option>
+                        <option value="Quaid-e-Millath Government College for Women, Anna Salai">Quaid-e-Millath Government College for Women, Anna Salai</option>
+                        <option value="Alpha Arts and Science College, Porur">Alpha Arts and Science College, Porur</option>
+                        <option value="St. Thomas College of Arts and Science, Koyambedu">St. Thomas College of Arts and Science, Koyambedu</option>
+                        <option value="Sir Theagaraya College, Old Washermanpet">Sir Theagaraya College, Old Washermanpet</option>
+                        <option value="Chellammal Women's College, Guindy">Chellammal Women's College, Guindy</option>
+                        <option value="Chevalier T. Thomas Elizabeth College for Women, Perambur">Chevalier T. Thomas Elizabeth College for Women, Perambur</option>
+                        <option value="Mar Gregorios College of Arts & Science, Mogappair">Mar Gregorios College of Arts & Science, Mogappair</option>
+                        <option value="University of Madras (University Campus / Department)">University of Madras (University Campus / Department)</option>
+                        <option value="Other">Other Madras University College (Specify below)</option>
+                    </select>
+                </div>
+                <input type="text" id="pg_college_other" placeholder="Enter your College / University name" style="display:none; margin-top:8px;">
+            </div>
+
+            <div class="input-group" id="pg_cgpa_group" style="display:none;">
+                <label for="pg_cgpa">PG CGPA</label>
+                <input type="number" step="0.01" id="pg_cgpa" placeholder="Enter PG CGPA">
+            </div>
+
+            <div class="wizard-nav">
+                <button type="button" class="wizard-btn prev" onclick="prevStep(2)">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="button" class="wizard-btn next" onclick="nextStep(2)">
+                    Next: Resume & Review <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ── STEP 3: Resume Upload & Review ── -->
+        <div class="wizard-panel" id="stepPanel-3">
+            <div class="wizard-summary-card" id="wizardSummaryCard">
+                <div style="font-weight:600; color:#58a6ff; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+                    <i class="fas fa-clipboard-check"></i> Application Summary
+                </div>
+                <div class="wizard-summary-row"><span>Candidate:</span><span id="sumName">—</span></div>
+                <div class="wizard-summary-row"><span>Email:</span><span id="sumEmail">—</span></div>
+                <div class="wizard-summary-row"><span>Position:</span><span id="sumRole">—</span></div>
+                <div class="wizard-summary-row"><span>Education:</span><span id="sumEdu">—</span></div>
+            </div>
+
+            <div class="input-group">
+                <label for="resume">Attach Resume (PDF only)</label>
+                <input type="file" id="resume" accept=".pdf" required>
+                <div class="resume-attached-box" id="resumeAttachedBox" style="display:none;">
+                    <div class="resume-att-left">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="resume-att-info">
+                            <span class="resume-att-title" id="resumeAttName">resume.pdf</span>
+                            <span class="resume-att-sub" id="resumeAttSub"><i class="fas fa-check-circle"></i> Auto-attached from Chatbot analysis</span>
+                        </div>
+                    </div>
+                    <span class="resume-att-badge" id="resumeAttBadge">Auto-Attached</span>
+                </div>
+            </div>
+
+            <div class="wizard-nav">
+                <button type="button" class="wizard-btn prev" onclick="prevStep(3)">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button type="submit" class="submit-btn" id="submitBtn" style="margin-top:0; flex:1;">
+                    <i class="fas fa-spinner fa-spin" id="spinner" style="display:none;"></i>
+                    Submit Application
+                </button>
+            </div>
+        </div>
+        </form>
+
+        <div class="success-msg" id="successMsg">
+            <i class="fas fa-check-circle" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+            Application submitted successfully!<br>
+            <small style="color:#8b949e;">Redirecting to chatbot…</small>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+    <!-- ── Application Status Tracker ── -->
+    <div class="status-card" id="statusCard">
+        <div class="status-card-header">
+            <i class="fas fa-briefcase"></i>
+            <h3>My Job Applications</h3>
+            <span class="count-pill" id="countPill" style="display:none;"></span>
+        </div>
+        <div class="status-list" id="statusList">
+            <!-- Skeletons while loading -->
+            <div class="sk-row">
+                <div class="sk sk-circle"></div>
+                <div class="sk-lines">
+                    <div class="sk sk-line"></div>
+                    <div class="sk sk-line s"></div>
+                </div>
+                <div class="sk sk-badge"></div>
+            </div>
+            <div class="sk-row">
+                <div class="sk sk-circle"></div>
+                <div class="sk-lines">
+                    <div class="sk sk-line"></div>
+                    <div class="sk sk-line s"></div>
+                </div>
+                <div class="sk sk-badge"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ── helpers ──────────────────────────────────────────────────
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // ── Multi-Step Wizard Handlers ────────────────────────────────
+    let _currentStep = 1;
+
+    function goToStep(step) {
+        if (step === _currentStep) return;
+        if (step > _currentStep) {
+            for (let s = _currentStep; s < step; s++) {
+                if (!validateStep(s)) return;
+            }
+        }
+        setStep(step);
+    }
+
+    function nextStep(current) {
+        if (!validateStep(current)) return;
+        setStep(current + 1);
+    }
+
+    function prevStep(current) {
+        setStep(current - 1);
+    }
+
+    function validateStep(step) {
+        if (step === 1) {
+            const photo = document.getElementById('photo');
+            const name = document.getElementById('full_name');
+            const email = document.getElementById('email');
+
+            if (photo && (!photo.files || photo.files.length === 0)) {
+                photo.focus();
+                if (photo.reportValidity) photo.reportValidity();
+                return false;
+            }
+            if (name && !name.value.trim()) {
+                name.focus();
+                if (name.reportValidity) name.reportValidity();
+                return false;
+            }
+            if (email && !email.value.trim()) {
+                email.focus();
+                if (email.reportValidity) email.reportValidity();
+                return false;
+            }
+            return true;
+        }
+        if (step === 2) {
+            const ugCourse = document.getElementById('ug_course');
+            const ugCollege = document.getElementById('ug_college');
+            const ugCgpa = document.getElementById('ug_cgpa');
+
+            if (ugCourse && !ugCourse.value) {
+                ugCourse.focus();
+                if (ugCourse.reportValidity) ugCourse.reportValidity();
+                return false;
+            }
+            if (ugCollege && !ugCollege.value) {
+                ugCollege.focus();
+                if (ugCollege.reportValidity) ugCollege.reportValidity();
+                return false;
+            }
+            if (ugCgpa && !ugCgpa.value) {
+                ugCgpa.focus();
+                if (ugCgpa.reportValidity) ugCgpa.reportValidity();
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    function setStep(step) {
+        _currentStep = Math.max(1, Math.min(3, step));
+        for (let i = 1; i <= 3; i++) {
+            const panel = document.getElementById('stepPanel-' + i);
+            const wstep = document.getElementById('wstep-' + i);
+            if (panel) panel.classList.toggle('active', i === _currentStep);
+            if (wstep) {
+                wstep.classList.toggle('active', i === _currentStep);
+                wstep.classList.toggle('completed', i < _currentStep);
+            }
+            if (i <= 2) {
+                const line = document.getElementById('wline-' + i);
+                if (line) line.classList.toggle('completed', i < _currentStep);
+            }
+        }
+
+        if (_currentStep === 3) {
+            updateWizardSummary();
+        }
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function updateWizardSummary() {
+        const name = document.getElementById('full_name')?.value || '—';
+        const email = document.getElementById('email')?.value || '—';
+        const role = document.getElementById('roleSelect')?.value || document.getElementById('role')?.value || '—';
+        const ugCourse = document.getElementById('ug_course')?.value || '—';
+        const ugCgpa = document.getElementById('ug_cgpa')?.value || '—';
+        const collegeVal = (typeof getCollegeValue === 'function') ? getCollegeValue('ug') : (document.getElementById('ug_college')?.value || '—');
+        const pgCourse = document.getElementById('course')?.value || '';
+        const pgCgpa = document.getElementById('pg_cgpa')?.value || '';
+        const pgCollegeVal = (typeof getCollegeValue === 'function') ? getCollegeValue('pg') : (document.getElementById('pg_college')?.value || '');
+
+        const elName = document.getElementById('sumName');
+        const elEmail = document.getElementById('sumEmail');
+        const elRole = document.getElementById('sumRole');
+        const elEdu = document.getElementById('sumEdu');
+
+        if (elName) elName.textContent = name;
+        if (elEmail) elEmail.textContent = email;
+        if (elRole) elRole.textContent = role;
+
+        // Build Education string — show PG (MCA etc.) if selected
+        let eduText = `${ugCourse} (${ugCgpa} CGPA) - ${collegeVal}`;
+        if (pgCourse) {
+            const pgExtra = pgCgpa ? ` (${pgCgpa} CGPA)` : '';
+            const pgCollege = pgCollegeVal ? ` - ${pgCollegeVal}` : '';
+            eduText += ` | ${pgCourse}${pgExtra}${pgCollege}`;
+        }
+        if (elEdu) elEdu.textContent = eduText;
+    }
+
+    const STATUS_LABEL = {
+        pending:      'Pending',
+        under_review: 'Under Review',
+        shortlisted:  'Shortlisted',
+        rejected:     'Rejected',
+        selected:     'Selected',
+    };
+
+    function buildRow(app, idx) {
+        const sk = app.status || 'pending';
+        const msgs = app.messages || [];
+        const hasMsgs = msgs.length > 0;
+
+        let messagesHtml = '';
+        if (hasMsgs) {
+            messagesHtml = `
+            <div class="candidate-messages-container">
+                <div style="font-size:11px; font-weight:700; color:#4ade80; text-transform:uppercase; letter-spacing:0.5px; display:flex; align-items:center; gap:6px;">
+                    <i class="fas fa-bell"></i> HR Messages & Interview Invitations (${msgs.length})
+                </div>
+                ${msgs.map(m => `
+                    <div class="candidate-message-card">
+                        <div class="c-msg-header">
+                            <span class="c-msg-title"><i class="fas fa-envelope-open-text"></i> ${esc(m.subject)}</span>
+                            <span class="c-msg-time"><i class="far fa-clock"></i> ${esc(m.created_at)}</span>
+                        </div>
+                        <div class="c-msg-body">${esc(m.message)}</div>
+                        ${(m.scheduled_time || m.venue_address || m.meeting_link) ? `
+                            <div class="c-msg-interview-box">
+                                <div>
+                                    ${m.scheduled_time ? `<div style="font-size:12px; color:#4ade80; font-weight:600;"><i class="fas fa-calendar-alt"></i> In-Person Interview Time: ${esc(m.scheduled_time)}</div>` : ''}
+                                    ${m.venue_address ? `<div style="font-size:12px; color:#38bdf8; font-weight:600; margin-top:3px;"><i class="fas fa-building"></i> Campus Venue: <span style="font-weight:400; color:#cbd5e1;">${esc(m.venue_address)}</span></div>` : ''}
+                                </div>
+                                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap; margin-top:6px;">
+                                    ${m.calendar_link ? `
+                                        <a href="${esc(m.calendar_link)}" target="_blank" class="c-msg-meet-link" style="background:#2563eb;">
+                                            <i class="fas fa-calendar-plus"></i> Add to Google Calendar
+                                        </a>` : ''}
+                                    ${(!m.venue_address && m.meeting_link) ? `
+                                        <a href="${esc(m.meeting_link)}" target="_blank" class="c-msg-meet-link">
+                                            <i class="fas fa-video"></i> Join Meeting
+                                        </a>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            </div>`;
+        }
+
+        return `
+        <div class="app-row-wrap" style="animation-delay:${idx*0.07}s">
+            <div class="app-row-main">
+                <div class="app-row-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="app-row-info">
+                    <div class="app-row-role">${esc(app.role)}</div>
+                    <div class="app-row-date"><i class="fas fa-calendar-alt"></i> ${esc(app.applied_at)}</div>
+                </div>
+                <div class="status-badge status-${esc(sk)}">
+                    <span class="dot"></span>${esc(app.status_display)}
+                </div>
+            </div>
+            ${messagesHtml}
+        </div>`;
+    }
+
+    // ── pre-fill form & auto-attach resume ─────────────────────
+    window.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('firebaseToken');
+        if (!token) {
+            alert('Please login first to apply.');
+            window.location.href = '/login/?next=' + encodeURIComponent(window.location.pathname + window.location.search);
+            return;
+        }
+
+        const name  = localStorage.getItem('userName');
+        let email = localStorage.getItem('userEmail');
+
+        // Fallback: If userEmail not stored in localStorage, fetch from backend
+        if (!email) {
+            try {
+                const res = await fetch('/save-user/', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (res.ok) {
+                    const udata = await res.json();
+                    if (udata.userEmail) {
+                        email = udata.userEmail;
+                        localStorage.setItem('userEmail', email);
+                    }
+                    if (udata.userName && (!name || name === 'User')) {
+                        localStorage.setItem('userName', udata.userName);
+                        document.getElementById('full_name').value = udata.userName;
+                    }
+                }
+            } catch (e) {
+                console.warn("Could not fetch user profile email:", e);
+            }
+        }
+
+        if (name && name !== 'User') document.getElementById('full_name').value = name;
+        if (email) {
+            const emailInput = document.getElementById('email');
+            emailInput.value = email;
+            emailInput.readOnly = true;
+        }
+        
+        // Initialise selected role location badge
+        handleRoleChange(document.getElementById('roleSelect').value);
+
+        // Pre-fill ATS score from query param or localStorage
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const scoreParam = urlParams.get('score') || localStorage.getItem('latestAnalyzedScore') || '';
+            if (scoreParam) {
+                const el = document.getElementById('ats_score');
+                if (el) el.value = scoreParam;
+            }
+        } catch (e) {}
+
+        autoAttachResume();
+        loadJobStatus();
+
+        // 30s silent background status auto-refresh
+        setInterval(() => {
+            if (!document.hidden) loadJobStatus();
+        }, 30000);
+    });
+
+    const _jobPostingsMap = {
+        {% for p in active_postings %}
+        "{{ p.title|escapejs }}": "{{ p.location|escapejs }}",
+        {% endfor %}
+    };
+
+    function handleRoleChange(val) {
+        document.getElementById('role').value = val;
+        const badge = document.getElementById('roleLocationBadge');
+        if (badge) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const chosenLoc = urlParams.get('location') || '{{ location|escapejs }}';
+            if (chosenLoc.toLowerCase().includes('pune')) {
+                badge.textContent = "Pune, Maharashtra (Global HQ, Kharadi)";
+            } else if (chosenLoc.toLowerCase().includes('bengaluru') || chosenLoc.toLowerCase().includes('bangalore')) {
+                badge.textContent = "Bengaluru, Karnataka (Whitefield Campus)";
+            } else if (chosenLoc.toLowerCase().includes('hyderabad')) {
+                badge.textContent = "Hyderabad, Telangana (Hitec City Campus)";
+            } else if (chosenLoc.toLowerCase().includes('chennai')) {
+                badge.textContent = "Chennai, Tamil Nadu (OMR Tech Park / DLF)";
+            } else {
+                let loc = _jobPostingsMap[val] || "Chennai, Tamil Nadu (OMR Tech Park)";
+                if (loc.includes(' / ')) loc = "Chennai, Tamil Nadu (OMR Tech Park)";
+                badge.textContent = loc;
+            }
+        }
+    }
+
+    function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    async function autoAttachResume() {
+        const fileInput = document.getElementById('resume');
+        const box = document.getElementById('resumeAttachedBox');
+        const nameEl = document.getElementById('resumeAttName');
+        const subEl = document.getElementById('resumeAttSub');
+        const badgeEl = document.getElementById('resumeAttBadge');
+
+        // Listen to manual file changes
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const f = this.files[0];
+                nameEl.textContent = `${f.name} (${formatBytes(f.size)})`;
+                subEl.innerHTML = '<i class="fas fa-check-circle"></i> Selected from your device';
+                badgeEl.textContent = 'Selected';
+                box.style.display = 'flex';
+                fileInput.required = false;
+            } else {
+                box.style.display = 'none';
+            }
+        });
+
+        // 1. Try client IndexedDB
+        let attachedFile = null;
+        let attachedName = '';
+        let attachedSize = 0;
+
+        if (window.indexedDB) {
+            try {
+                const item = await new Promise((resolve) => {
+                    const req = indexedDB.open("ZenbotResumeDB", 1);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains("resumes")) db.createObjectStore("resumes", { keyPath: "id" });
+                    };
+                    req.onsuccess = (e) => {
+                        const db = e.target.result;
+                        const tx = db.transaction("resumes", "readonly");
+                        const getReq = tx.objectStore("resumes").get("current_resume");
+                        getReq.onsuccess = () => resolve(getReq.result || null);
+                        getReq.onerror = () => resolve(null);
+                    };
+                    req.onerror = () => resolve(null);
+                });
+
+                if (item && item.file) {
+                    attachedName = item.name;
+                    attachedSize = item.size || 0;
+                    attachedFile = new File([item.file], item.name, {
+                        type: item.type || 'application/pdf',
+                        lastModified: item.savedAt || Date.now()
+                    });
+                }
+            } catch (e) {
+                console.warn("IndexedDB load error:", e);
+            }
+        }
+
+        // 2. If not in IndexedDB, fetch from server fallback
+        if (!attachedFile) {
+            const token = localStorage.getItem('firebaseToken');
+            if (token) {
+                try {
+                    const res = await fetch('/get-analyzed-resume/', {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (res.ok) {
+                        const blob = await res.blob();
+                        attachedName = localStorage.getItem('analyzedResumeName') || 'analyzed_resume.pdf';
+                        attachedSize = blob.size;
+                        attachedFile = new File([blob], attachedName, { type: 'application/pdf' });
+                    }
+                } catch (e) {
+                    console.warn("Server resume fetch error:", e);
+                }
+            }
+        }
+
+        // 3. Attach file to input if available
+        if (attachedFile && fileInput) {
+            try {
+                const dt = new DataTransfer();
+                dt.items.add(attachedFile);
+                fileInput.files = dt.files;
+            } catch (e) {
+                console.warn("DataTransfer set files error:", e);
+            }
+
+            nameEl.textContent = `${attachedName} (${formatBytes(attachedSize)})`;
+            subEl.innerHTML = '<i class="fas fa-check-circle"></i> Auto-attached from your Chatbot analysis';
+            badgeEl.textContent = 'Auto-Attached';
+            box.style.display = 'flex';
+            fileInput.required = false;
+        }
+    }
+
+    // ── load job application statuses ───────────────────────────
+    async function loadJobStatus() {
+        const token = localStorage.getItem('firebaseToken');
+        const list  = document.getElementById('statusList');
+        const pill  = document.getElementById('countPill');
+
+        if (!token) {
+            list.innerHTML = `<div class="state-box"><i class="fas fa-lock"></i>Log in to view your applications.</div>`;
+            return;
+        }
+
+        try {
+            const res  = await fetch('/my-applications/', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (!res.ok) throw new Error('fetch failed');
+            const data = await res.json();
+
+            // Filter only Job type
+            const apps = (data.applications || []).filter(a => a.type === 'Job');
+
+            if (apps.length === 0) {
+                list.innerHTML = `<div class="state-box"><i class="fas fa-folder-open"></i>No job applications yet. Submit your first one above!</div>`;
+                return;
+            }
+
+            pill.textContent = apps.length;
+            pill.style.display = 'inline';
+            list.innerHTML = apps.map((a, i) => buildRow(a, i)).join('');
+
+        } catch (_) {
+            list.innerHTML = `<div class="state-box"><i class="fas fa-exclamation-triangle"></i>Could not load status. <a href="javascript:loadJobStatus()" style="color:#58a6ff;">Retry</a></div>`;
+        }
+    }
+
+    // ── PG CGPA & College toggle ───────────────────────────────────────────
+    function togglePGCGPA() {
+        const val         = document.getElementById('course').value;
+        const groupCGPA   = document.getElementById('pg_cgpa_group');
+        const inpCGPA     = document.getElementById('pg_cgpa');
+        const groupColl   = document.getElementById('pg_college_group');
+        const selColl     = document.getElementById('pg_college');
+        const otherColl   = document.getElementById('pg_college_other');
+        const madrasGroup = document.getElementById('pg_madras_group');
+        const madrasSel   = document.getElementById('pg_madras_college');
+
+        if (val && val.startsWith('M')) {
+            groupCGPA.style.display = 'block';
+            inpCGPA.required = true;
+            groupColl.style.display = 'block';
+            selColl.required = true;
+        } else {
+            groupCGPA.style.display = 'none';
+            inpCGPA.required = false;
+            inpCGPA.value = '';
+            groupColl.style.display = 'none';
+            selColl.required = false;
+            selColl.value = '';
+            if (madrasGroup) madrasGroup.style.display = 'none';
+            if (madrasSel) { madrasSel.required = false; madrasSel.value = ''; }
+            if (otherColl) {
+                otherColl.style.display = 'none';
+                otherColl.required = false;
+                otherColl.value = '';
+            }
+        }
+    }
+
+    function handleCollegeChange(type) {
+        const sel         = document.getElementById(type + '_college');
+        const other       = document.getElementById(type + '_college_other');
+        const madrasGroup = document.getElementById(type + '_madras_group');
+        const madrasSel   = document.getElementById(type + '_madras_college');
+
+        const val = sel.value;
+
+        if (val === 'University of Madras, Chennai') {
+            if (madrasGroup) madrasGroup.style.display = 'block';
+            if (madrasSel) {
+                madrasSel.required = true;
+                madrasSel.focus();
+            }
+            if (other) {
+                other.style.display = 'none';
+                other.required = false;
+                other.value = '';
+            }
+        } else if (val === 'Other') {
+            if (madrasGroup) {
+                madrasGroup.style.display = 'none';
+                if (madrasSel) { madrasSel.required = false; madrasSel.value = ''; }
+            }
+            if (other) {
+                other.style.display = 'block';
+                other.required = true;
+                other.placeholder = 'Enter your College / University name';
+                other.focus();
+            }
+        } else {
+            if (madrasGroup) {
+                madrasGroup.style.display = 'none';
+                if (madrasSel) { madrasSel.required = false; madrasSel.value = ''; }
+            }
+            if (other) {
+                other.style.display = 'none';
+                other.required = false;
+                other.value = '';
+            }
+        }
+    }
+
+    function handleMadrasCollegeChange(type) {
+        const madrasSel = document.getElementById(type + '_madras_college');
+        const other     = document.getElementById(type + '_college_other');
+        if (madrasSel.value === 'Other') {
+            other.style.display = 'block';
+            other.required = true;
+            other.placeholder = 'Enter your Madras University college name';
+            other.focus();
+        } else {
+            other.style.display = 'none';
+            other.required = false;
+            other.value = '';
+        }
+    }
+
+    function getCollegeValue(type) {
+        const sel = document.getElementById(type + '_college');
+        if (!sel || !sel.value) return "";
+
+        if (sel.value === 'University of Madras, Chennai') {
+            const madrasSel = document.getElementById(type + '_madras_college');
+            if (madrasSel && madrasSel.value) {
+                if (madrasSel.value === 'Other') {
+                    const other = document.getElementById(type + '_college_other');
+                    return other && other.value.trim() ? `${other.value.trim()} (University of Madras)` : 'University of Madras, Chennai';
+                }
+                return madrasSel.value;
+            }
+            return 'University of Madras, Chennai';
+        }
+
+        if (sel.value === 'Other') {
+            const other = document.getElementById(type + '_college_other');
+            return other ? other.value.trim() : "";
+        }
+
+        return sel.value;
+    }
+
+    // ── Form submission ──────────────────────────────────────────
+    const form       = document.getElementById('applyForm');
+    const submitBtn  = document.getElementById('submitBtn');
+    const spinner    = document.getElementById('spinner');
+    const successMsg = document.getElementById('successMsg');
+    const errorMsg   = document.getElementById('errorMsg');
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem('firebaseToken');
+        if (!token) { alert('Please login to apply.'); window.location.href = '/login/'; return; }
+
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        errorMsg.style.display = 'none';
+
+        const userEmail = localStorage.getItem('userEmail') || document.getElementById('email').value;
+
+        const fd = new FormData();
+        fd.append('role',       document.getElementById('role').value);
+        fd.append('ats_score',  document.getElementById('ats_score').value || '');
+        fd.append('full_name',  document.getElementById('full_name').value);
+        fd.append('email',      userEmail);
+        fd.append('phone',      document.getElementById('phone').value);
+        fd.append('course',     document.getElementById('course').value || "");
+        fd.append('ug_course',  document.getElementById('ug_course').value);
+        fd.append('ug_college', getCollegeValue('ug'));
+        fd.append('pg_college', getCollegeValue('pg'));
+        fd.append('ug_cgpa',    document.getElementById('ug_cgpa').value);
+        fd.append('pg_cgpa',    document.getElementById('pg_cgpa').value);
+        fd.append('resume',     document.getElementById('resume').files[0]);
+        fd.append('photo',      document.getElementById('photo').files[0]);
+
+        try {
+            const res  = await fetch('/submit-job-application/', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token },
+                body: fd
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                // Send EmailJS confirmation
+                const hasPg = !!((fd.get('pg_college') && fd.get('pg_college').trim() && fd.get('pg_college') !== 'N/A') || (fd.get('pg_cgpa') && fd.get('pg_cgpa').trim() && fd.get('pg_cgpa') !== 'N/A'));
+                emailjs.send('service_zrv1o4l', 'template_wme6qxd', {
+                    user_name:   fd.get('full_name'),
+                    user_email:  userEmail,
+                    job_role:    fd.get('role'),
+                    course_name: fd.get('course') || '',
+                    ug_course:   fd.get('ug_course'),
+                    ug_college:  fd.get('ug_college'),
+                    pg_college:  hasPg ? (fd.get('pg_college') || '') : '',
+                    ug_cgpa:     fd.get('ug_cgpa'),
+                    pg_cgpa:     hasPg ? (fd.get('pg_cgpa') || '') : '',
+                    message: `New Job Application\nRole: ${fd.get('role')}\nName: ${fd.get('full_name')}`
+                }).catch(err => console.error('EmailJS:', err));
+
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+
+                // Refresh status list to show the new pending entry
+                loadJobStatus();
+
+                setTimeout(() => { window.location.href = '/chat/'; }, 3500);
+            } else {
+                throw new Error(data.error || 'Submission failed');
+            }
+        } catch (err) {
+            errorMsg.textContent = '❌ ' + err.message;
+            errorMsg.style.display = 'block';
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+        }
+    };
+</script>
+
+</body>
+</html>

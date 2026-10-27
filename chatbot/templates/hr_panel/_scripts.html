@@ -1,0 +1,1808 @@
+
+<script>
+    const API_BASE = '';
+    let _allApps = [];
+    let _activeFilter = 'all';
+    let _typeFilter   = null;
+    let _archivedFilter = 'false';  // Default to active applications only; removed candidates stay hidden
+    let _selectedRole = null;       // selected role string, or null for all roles
+    let _rolePostFilter = 'all';    // 'all', 'active', 'inactive'
+    let _roleSearchQuery = '';
+
+    // ── Token & Cookie ───────────────────────────────────────────────────────
+    function getToken() { return localStorage.getItem('firebaseToken') || ''; }
+
+    function getCookie(name) {
+        const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[]\\])/g,'\\$1') + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    // ── Auth guard: redirect to login if no token found ──────────────────────
+    function checkAuth() {
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/login/?next=/hr/';
+        }
+    }
+
+    // ── Session Expired Handler ──────────────────────────────────────────────
+    let _sessionExpiredHandling = false;
+    function handleSessionExpired() {
+        if (_sessionExpiredHandling) return;
+        _sessionExpiredHandling = true;
+        localStorage.removeItem('firebaseToken');
+
+        showToast('Your session has expired. Redirecting to login...', 'error');
+        const list = document.getElementById('appsList');
+        if (list) {
+            list.innerHTML = `
+                <div class="access-denied">
+                    <i class="fas fa-clock" style="color:#f85149;"></i>
+                    <h2>Session Expired</h2>
+                    <p>Your HR authentication session has expired. Please log in again to continue.</p>
+                    <a href="/login/?next=/hr/"><i class="fas fa-sign-in-alt"></i> Re-login to HR Panel</a>
+                </div>`;
+        }
+        setTimeout(() => {
+            window.location.href = '/login/?next=/hr/';
+        }, 1800);
+    }
+
+    // ── Authenticated Fetch with Auto-Refresh ────────────────────────────────
+    async function hrFetch(url, options = {}) {
+        let token = getToken();
+        options.headers = options.headers || {};
+        if (token) {
+            options.headers['Authorization'] = 'Bearer ' + token;
+        }
+        const csrfToken = getCookie('csrftoken');
+        if (csrfToken && !options.headers['X-CSRFToken'] && options.method && options.method.toUpperCase() !== 'GET') {
+            options.headers['X-CSRFToken'] = csrfToken;
+        }
+
+        let res = await fetch(url, options);
+
+        if (res.status === 401) {
+            console.warn(`[hrFetch] 401 Unauthorized for ${url}. Attempting Firebase token refresh...`);
+            let refreshedToken = null;
+            if (window.refreshFirebaseAuthToken) {
+                try {
+                    refreshedToken = await window.refreshFirebaseAuthToken(true);
+                } catch (e) {
+                    console.error('[hrFetch] Refresh token error:', e);
+                }
+            }
+
+            if (refreshedToken && refreshedToken !== token) {
+                console.log('[hrFetch] Token refreshed. Retrying request...');
+                options.headers['Authorization'] = 'Bearer ' + refreshedToken;
+                res = await fetch(url, options);
+            }
+
+            if (res.status === 401) {
+                handleSessionExpired();
+            }
+        }
+
+        return res;
+    }
+
+    // ── Toast ────────────────────────────────────────────────────────────────
+    function showToast(msg, type = 'success') {
+        const t  = document.getElementById('toast');
+        const ic = t.querySelector('i');
+        document.getElementById('toastMsg').textContent = msg;
+        t.className = `toast ${type}`;
+        if (type === 'success') ic.className = 'fas fa-check-circle';
+        else if (type === 'error') ic.className = 'fas fa-exclamation-circle';
+        else ic.className = 'fas fa-info-circle';
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // ── Escape HTML ──────────────────────────────────────────────────────────
+    function esc(s) {
+        return String(s || '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Initials avatar ──────────────────────────────────────────────────────
+    function initials(name) {
+        const parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.slice(0, 2).toUpperCase();
+    }
+
+    // ── Build card HTML ──────────────────────────────────────────────────────
+    const _appMap = {};
+
+    function buildCard(app, idx) {
+        const mapKey = `${app.id}-${app.type}`;
+        _appMap[mapKey] = app;
+
+        const typeClass = app.type === 'internship' ? 'internship' : 'job';
+        const sk = app.status || 'pending';
+
+        // Determine which buttons to show based on current status
+        const btnReview    = sk !== 'under_review' ? `<button class="act-btn btn-review"    onclick="updateStatus('${mapKey}','under_review')"><i class="fas fa-search"></i> Under Review</button>` : '';
+        const btnShortlist = sk !== 'shortlisted'  ? `<button class="act-btn btn-shortlist" onclick="updateStatus('${mapKey}','shortlisted')"><i class="fas fa-star"></i> Shortlist</button>` : '';
+        const btnAccept    = sk !== 'selected'     ? `<button class="act-btn btn-accept"    onclick="updateStatus('${mapKey}','selected')"><i class="fas fa-check"></i> Accept</button>` : '';
+        const btnReject    = sk !== 'rejected'     ? `<button class="act-btn btn-reject"    onclick="updateStatus('${mapKey}','rejected')"><i class="fas fa-times"></i> Reject</button>` : '';
+
+        // Resume action link (PDF)
+        const lnkResume    = app.resume_url ? `<a href="${app.resume_url}" target="_blank" class="act-btn btn-doc" title="View Full Resume (PDF)"><i class="fas fa-file-pdf"></i> View Resume</a>` : `<span class="act-btn btn-doc" style="opacity:0.4; cursor:not-allowed;"><i class="fas fa-file-pdf"></i> No Resume</span>`;
+        const btnInterview = `<button class="act-btn btn-msg" onclick="openMessageModal('${mapKey}')" title="Interview Scheduling / Communication"><i class="fas fa-calendar-check"></i> Interview</button>`;
+
+        // If candidate is archived, show Restore AND Delete Forever; else show Remove (archive) button
+        const btnRemoveOrRestore = app.hr_archived
+            ? `<button class="act-btn btn-restore" onclick="restoreApp('${mapKey}')" title="Restore candidate to active panel"><i class="fas fa-undo"></i> Restore</button>
+               <button class="act-btn btn-remove" onclick="askRemoveApp('${mapKey}', true)" title="Permanently remove application from HR panel" style="border-color:#ef4444; color:#ef4444;"><i class="fas fa-trash-alt"></i> Delete Forever</button>`
+            : `<button class="act-btn btn-remove" onclick="askRemoveApp('${mapKey}', false)" title="Move application to archive"><i class="fas fa-archive"></i> Remove</button>`;
+
+        const isSelected   = _selectedKeys.has(mapKey);
+        const selClass     = isSelected ? ' is-selected' : '';
+
+        // Education & phone snippet
+        const ugCourseName = app.ug_course || (app.course && !app.course.startsWith('M') ? app.course : '') || (app.ug_college ? 'UG' : '');
+        const eduSnippet = (app.ug_college || app.ug_course || (app.course && !app.course.startsWith('M')))
+            ? `<span><i class="fas fa-graduation-cap"></i> ${esc(ugCourseName)}${app.ug_college ? ' • ' + esc(app.ug_college) : ''}${app.ug_cgpa ? ' (' + esc(app.ug_cgpa) + ' CGPA)' : ''}</span>`
+            : '';
+
+        const pgDegreeName = (app.course && app.course.startsWith('M')) ? app.course : '';
+        const hasPgData = (app.pg_college && app.pg_college.trim() && app.pg_college !== 'N/A') || (app.pg_cgpa && app.pg_cgpa.trim() && app.pg_cgpa !== 'N/A') || pgDegreeName;
+        const pgParts = [];
+        if (pgDegreeName) pgParts.push(esc(pgDegreeName));
+        if (app.pg_college && app.pg_college !== 'N/A') pgParts.push(esc(app.pg_college));
+        if (app.pg_cgpa && app.pg_cgpa !== 'N/A') pgParts.push(`(${esc(app.pg_cgpa)} CGPA)`);
+
+        const pgSnippet = hasPgData && pgParts.length > 0
+            ? `<span><i class="fas fa-user-graduate" style="color:#a78bfa;"></i> PG: ${pgParts.join(' • ')}</span>`
+            : '';
+        const phoneSnippet = app.phone ? `<span><i class="fas fa-phone"></i> ${esc(app.phone)}</span>` : '';
+
+        const avatarHtml = app.photo_url
+            ? `<img src="${esc(app.photo_url)}" alt="${esc(app.full_name)}" class="avatar" style="object-fit:cover;" onerror="this.outerHTML='<div class=\\'avatar\\'>${esc(initials(app.full_name))}</div>'">`
+            : `<div class="avatar">${esc(initials(app.full_name))}</div>`;
+
+        return `
+        <div class="app-card${selClass}" id="appcard-${mapKey}" style="animation-delay:${idx * 0.05}s">
+            <div class="card-top">
+                <label class="card-chk-wrap" onclick="event.stopPropagation()" title="Select application">
+                    <input type="checkbox" class="app-chk" data-mapkey="${mapKey}" onchange="onItemChkChange('${mapKey}', this.checked)" ${isSelected ? 'checked' : ''}>
+                    <span class="custom-chk"></span>
+                </label>
+                ${avatarHtml}
+                <div class="card-info">
+                    <div class="card-name">${esc(app.full_name)}</div>
+                    <div class="card-role"><i class="fas fa-briefcase" style="font-size:11px; color:#58a6ff; margin-right:4px;"></i>${esc(app.role)}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+                    <span class="type-badge ${typeClass}">${esc(app.type_display)}</span>
+                    <span class="status-badge-hr sb-${sk}" id="badge-${mapKey}">
+                        <span class="dot"></span>${esc(app.status_display)}
+                    </span>
+                </div>
+            </div>
+            <div class="card-actions" id="actions-${mapKey}">
+                ${lnkResume}
+                ${btnReview}${btnShortlist}${btnAccept}${btnReject}${btnRemoveOrRestore}
+            </div>
+        </div>`;
+    }
+
+    // ── Load applications ────────────────────────────────────────────────────
+    async function loadApplications() {
+        const token = getToken();
+        const list  = document.getElementById('appsList');
+        const icon  = document.getElementById('refreshIcon');
+
+        if (!token) {
+            if (list) {
+                list.innerHTML = `
+                    <div class="access-denied">
+                        <i class="fas fa-lock"></i>
+                        <h2>Not Logged In</h2>
+                        <p>Please log in with your HR account to access this panel.</p>
+                        <a href="/login/?next=/hr/"><i class="fas fa-sign-in-alt"></i> Log In</a>
+                    </div>`;
+            }
+            return;
+        }
+
+        if (icon) icon.classList.add('fa-spin');
+
+        try {
+            const url = `/hr/applications/?archived=${_archivedFilter}`;
+            const res  = await hrFetch(url);
+
+            if (res.status === 403) {
+                if (list) {
+                    list.innerHTML = `
+                        <div class="access-denied">
+                            <i class="fas fa-shield-alt"></i>
+                            <h2>Access Denied</h2>
+                            <p>Your account does not have HR privileges. Contact the administrator.</p>
+                            <a href="/chat/"><i class="fas fa-arrow-left"></i> Go Back</a>
+                        </div>`;
+                }
+                return;
+            }
+
+            if (res.status === 401) {
+                // Handled in hrFetch (retried or redirected)
+                return;
+            }
+
+            if (!res.ok) throw new Error('Failed to fetch: ' + res.status);
+
+            const data = await res.json();
+            _allApps = data.applications || [];
+            renderStats();
+            renderList();
+            renderRolesSidebar();
+            renderSelectedPostBanner();
+            fetchInactiveCandidateCount();
+
+        } catch (err) {
+            console.error('loadApplications error:', err);
+            if (list) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Could not load applications. Please try again.</p>
+                    </div>`;
+            }
+        } finally {
+            if (icon) icon.classList.remove('fa-spin');
+        }
+    }
+
+    // ── Inactive candidates no-op stub ─────
+    function fetchInactiveCandidateCount() {}
+
+    // ── Render stats ─────────────────────────────────────────────────────────
+    function renderStats() {
+        let appsToCount = [..._allApps];
+        if (_selectedRole) {
+            const sel = _selectedRole.trim().toLowerCase();
+            appsToCount = appsToCount.filter(a => {
+                const r = (a.role || '').trim().toLowerCase();
+                return r === sel || r.includes(sel) || sel.includes(r);
+            });
+        }
+
+        const counts = { all: appsToCount.length, pending: 0, under_review: 0, shortlisted: 0, selected: 0, rejected: 0 };
+        appsToCount.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
+        Object.keys(counts).forEach(k => {
+            const el = document.getElementById('cnt-' + k);
+            if (el) el.textContent = counts[k];
+        });
+    }
+
+    // ── Render applications list ─────────────────────────────────────────────
+    function renderList() {
+        const list = document.getElementById('appsList');
+        if (!list) return;
+
+        let apps = [..._allApps];
+
+        // Apply role filter (e.g. Full Stack Developer, Python Developer)
+        if (_selectedRole) {
+            const sel = _selectedRole.trim().toLowerCase();
+            apps = apps.filter(a => {
+                const r = (a.role || '').trim().toLowerCase();
+                return r === sel || r.includes(sel) || sel.includes(r);
+            });
+        }
+
+        // Apply status filter (pending, shortlisted, etc.)
+        if (_activeFilter && _activeFilter !== 'all') {
+            apps = apps.filter(a => a.status === _activeFilter);
+        }
+
+        // Apply track type filter (internship, job)
+        if (_typeFilter) {
+            apps = apps.filter(a => a.type === _typeFilter);
+        }
+
+        if (apps.length === 0) {
+            const roleMsg = _selectedRole ? ` for role "${esc(_selectedRole)}"` : '';
+            list.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>No applications found${roleMsg} under this filter.</p>
+                </div>`;
+            updateBulkUI();
+            return;
+        }
+
+        list.innerHTML = apps.map((app, i) => buildCard(app, i)).join('');
+        updateBulkUI();
+    }
+
+    // ── Filter handlers ──────────────────────────────────────────────────────
+    async function filterBy(status) {
+        _activeFilter = status;
+        _typeFilter   = null;
+
+        // Update stat card active
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+        const sc = document.getElementById('stat-' + status);
+        if (sc) sc.classList.add('active');
+
+        // Update filter tabs
+        document.querySelectorAll('.ftab').forEach(t => {
+            if (t.id === 'ftab-all-resumes') return;
+            t.classList.remove('active');
+        });
+        const tabAll = document.getElementById('ftab-all');
+        if (tabAll) tabAll.classList.add('active');
+
+        if (_archivedFilter !== 'false') {
+            _archivedFilter = 'false';
+            await loadApplications();
+        } else {
+            renderList();
+        }
+    }
+
+    async function filterByType(type) {
+        _typeFilter   = type;
+        _activeFilter = 'all';
+
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+        const statAll = document.getElementById('stat-all');
+        if (statAll) statAll.classList.add('active');
+
+        document.querySelectorAll('.ftab').forEach(t => {
+            if (t.id === 'ftab-all-resumes') return;
+            t.classList.remove('active');
+        });
+        const tab = document.getElementById('ftab-' + type);
+        if (tab) tab.classList.add('active');
+
+        if (_archivedFilter !== 'false') {
+            _archivedFilter = 'false';
+            await loadApplications();
+        } else {
+            renderList();
+        }
+    }
+
+    async function filterArchived() {
+        _archivedFilter = 'true';
+        _typeFilter     = null;
+        _activeFilter   = 'all';
+        _selectedRole   = null;
+
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+        const tabArch = document.getElementById('ftab-archived');
+        if (tabArch) tabArch.classList.add('active');
+
+        renderSelectedPostBanner();
+        await loadApplications();
+    }
+
+    // ── Clear all filters to view all candidate applications & resumes ─────────
+    async function clearAllFilters() {
+        const wasArchived = (_archivedFilter !== 'false');
+        _activeFilter = 'all';
+        _typeFilter   = null;
+        _selectedRole = null;
+        _archivedFilter = 'false';
+
+        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+        const statAll = document.getElementById('stat-all');
+        if (statAll) statAll.classList.add('active');
+
+        document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+        const tabAll = document.getElementById('ftab-all');
+        if (tabAll) tabAll.classList.add('active');
+        const tabAllResumes = document.getElementById('ftab-all-resumes');
+        if (tabAllResumes) tabAllResumes.classList.add('active');
+
+        renderSelectedPostBanner();
+        if (wasArchived) {
+            await loadApplications();
+        } else {
+            renderList();
+        }
+    }
+
+    // ── Roles Sidebar & Navigator Management ─────────────────────────────────
+    function renderRolesSidebar() {
+        const container = document.getElementById('rolesSidebarList');
+        if (!container) return;
+
+        const roleMap = new Map();
+
+        // 1. Add all formal job postings from _allJobs
+        _allJobs.forEach(job => {
+            const key = job.title.trim().toLowerCase();
+            roleMap.set(key, {
+                title: job.title.trim(),
+                job_type: job.job_type,
+                department: job.department || 'Engineering',
+                location: job.location || 'Pune / Hybrid',
+                experience: job.experience || 'Fresher / 0-2 Years',
+                skills: job.skills || '',
+                is_active: job.is_active,
+                job_id: job.id,
+                applicant_count: 0
+            });
+        });
+
+        // 2. Count applicants per role from current applications (or fallback role entry)
+        _allApps.forEach(app => {
+            const rTitle = (app.role || '').trim();
+            if (!rTitle) return;
+            const key = rTitle.toLowerCase();
+            if (!roleMap.has(key)) {
+                roleMap.set(key, {
+                    title: rTitle,
+                    job_type: app.type,
+                    department: 'Engineering',
+                    location: app.preferred_location || 'Pune / Hybrid',
+                    experience: 'Fresher / 0-2 Years',
+                    skills: app.key_skills || '',
+                    is_active: true,
+                    job_id: null,
+                    applicant_count: 0
+                });
+            }
+            roleMap.get(key).applicant_count++;
+        });
+
+        let rolesArray = Array.from(roleMap.values());
+
+        // Filter by post status: 'all', 'active', 'inactive'
+        if (_rolePostFilter === 'active') {
+            rolesArray = rolesArray.filter(r => r.is_active);
+        } else if (_rolePostFilter === 'inactive') {
+            rolesArray = rolesArray.filter(r => !r.is_active);
+        }
+
+        // Filter by search query
+        if (_roleSearchQuery) {
+            const q = _roleSearchQuery.toLowerCase();
+            rolesArray = rolesArray.filter(r =>
+                r.title.toLowerCase().includes(q) ||
+                (r.skills && r.skills.toLowerCase().includes(q)) ||
+                (r.department && r.department.toLowerCase().includes(q))
+            );
+        }
+
+        const countEl = document.getElementById('rolesSidebarCount');
+        if (countEl) countEl.textContent = rolesArray.length;
+
+        // "All Roles / Openings" master item
+        const isAllActive = (_selectedRole === null);
+        let html = `
+            <div class="role-card-item${isAllActive ? ' active' : ''}" onclick="selectRole(null)">
+                <div class="role-card-top">
+                    <div class="role-card-title"><i class="fas fa-th-large" style="color:#58a6ff; font-size:11px; margin-right:4px;"></i> All Job Posts & Roles</div>
+                    <span class="role-applicant-pill ${isAllActive ? 'has-apps' : ''}">${_allApps.length} total</span>
+                </div>
+                <div class="role-card-meta">
+                    <span>Show all candidate applications</span>
+                    <span style="font-size:10px; color:#58a6ff;"><i class="fas fa-chevron-right"></i></span>
+                </div>
+            </div>
+        `;
+
+        if (rolesArray.length === 0) {
+            html += `
+                <div style="text-align:center; padding:24px 10px; color:#8b949e; font-size:12px;">
+                    <i class="fas fa-briefcase" style="font-size:24px; color:#30363d; margin-bottom:8px; display:block;"></i>
+                    No ${_rolePostFilter !== 'all' ? _rolePostFilter + ' ' : ''}roles found.
+                </div>`;
+        } else {
+            html += rolesArray.map(role => {
+                const isSelected = (_selectedRole && _selectedRole.toLowerCase() === role.title.toLowerCase());
+                const typeBadgeClass = role.job_type === 'internship' ? 'internship' : 'job';
+                const typeBadgeText  = role.job_type === 'internship' ? 'Intern' : 'Job';
+                const statusDotClass = role.is_active ? 'green' : 'red';
+                const statusLabel    = role.is_active ? 'Active Opening' : 'Closed / Inactive';
+
+                return `
+                <div class="role-card-item${isSelected ? ' active' : ''}" onclick="selectRole('${esc(role.title)}')">
+                    <div class="role-card-top">
+                        <div class="role-card-title" title="${esc(role.title)}">${esc(role.title)}</div>
+                        <span class="dot-status ${statusDotClass}" title="${statusLabel}"></span>
+                    </div>
+                    <div class="role-card-meta">
+                        <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;">
+                            <span class="type-badge ${typeBadgeClass}" style="font-size:9px; padding:1px 6px;">${typeBadgeText}</span>
+                            ${esc(role.department)}
+                        </span>
+                        <span class="role-applicant-pill ${role.applicant_count > 0 ? 'has-apps' : ''}">
+                            <i class="fas fa-user-friends"></i> ${role.applicant_count}
+                        </span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        container.innerHTML = html;
+    }
+
+    async function selectRole(roleTitle) {
+        if (_archivedFilter !== 'false') {
+            _archivedFilter = 'false';
+            _selectedRole = roleTitle;
+            await loadApplications();
+            return;
+        }
+        if (_selectedRole === roleTitle) {
+            _selectedRole = null; // Toggle back to all roles
+        } else {
+            _selectedRole = roleTitle;
+        }
+        renderRolesSidebar();
+        renderSelectedPostBanner();
+        renderStats();
+        renderList();
+
+        if (window.innerWidth <= 1060) {
+            const appCol = document.getElementById('appsColumn');
+            if (appCol) appCol.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function filterRolePosts(state) {
+        _rolePostFilter = state; // 'all', 'active', 'inactive'
+        document.querySelectorAll('.rpf-btn').forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById('rpf-' + state);
+        if (btn) btn.classList.add('active');
+        renderRolesSidebar();
+    }
+
+    function onRoleSearch(val) {
+        _roleSearchQuery = (val || '').trim();
+        renderRolesSidebar();
+    }
+
+    // ── Selected Post Details Banner ("Post Also Mentioned") ─────────────────
+    function renderSelectedPostBanner() {
+        const banner = document.getElementById('selectedPostBanner');
+        if (!banner) return;
+
+        if (!_selectedRole) {
+            const isArch = (_archivedFilter === 'true');
+            banner.innerHTML = `
+                <div class="spb-header">
+                    <div class="spb-title-area">
+                        <h2><i class="fas fa-layer-group" style="color:#58a6ff;"></i> All Job & Internship Applications</h2>
+                        <div class="spb-subtitle">
+                            <span><i class="fas fa-users"></i> Showing ${_allApps.length} ${isArch ? 'inactive/archived' : 'active'} candidate record${_allApps.length === 1 ? '' : 's'} across all roles</span>
+                            <span><i class="fas fa-briefcase"></i> ${_allJobs.length} openings in catalog</span>
+                        </div>
+                    </div>
+                    <div class="spb-actions">
+                        <button class="topbar-btn primary" onclick="openCreateJobModal()" style="padding:6px 14px; font-size:12px;">
+                            <i class="fas fa-plus"></i> Post New Job
+                        </button>
+                        <button class="topbar-btn" onclick="openJobsModal()" style="padding:6px 14px; font-size:12px;">
+                            <i class="fas fa-cog"></i> Manage Openings
+                        </button>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Specific role is selected
+        const job = _allJobs.find(j => j.title.trim().toLowerCase() === _selectedRole.trim().toLowerCase()) || {
+            title: _selectedRole,
+            job_type: 'job',
+            department: 'Engineering',
+            location: 'Pune / Hybrid',
+            experience: 'Fresher / 0-2 Years',
+            skills: 'Problem Solving, Domain Competencies',
+            description: 'Candidate applications review pipeline',
+            is_active: true,
+            id: null
+        };
+
+        const isIntern = job.job_type === 'internship';
+        const typeBadgeClass = isIntern ? 'internship' : 'job';
+        const typeLabel = isIntern ? 'Internship Opening' : 'Full-time Position';
+        const statusPill = job.is_active
+            ? `<span class="job-status-pill active" style="font-size:11px; padding:3px 10px;"><i class="fas fa-check-circle"></i> Active Opening</span>`
+            : `<span class="job-status-pill closed" style="font-size:11px; padding:3px 10px;"><i class="fas fa-pause-circle"></i> Inactive / Closed</span>`;
+
+        const roleAppsCount = _allApps.filter(a => {
+            const r = (a.role || '').trim().toLowerCase();
+            const s = _selectedRole.trim().toLowerCase();
+            return r === s || r.includes(s) || s.includes(r);
+        }).length;
+
+        const skillsHtml = job.skills ? job.skills.split(',').map(s => `<span class="skill-tag">${esc(s.trim())}</span>`).join('') : '';
+
+        banner.innerHTML = `
+            <div class="spb-header">
+                <div class="spb-title-area">
+                    <h2>
+                        <span>${esc(job.title)}</span>
+                        <span class="type-badge ${typeBadgeClass}">${typeLabel}</span>
+                        ${statusPill}
+                    </h2>
+                    <div class="spb-subtitle">
+                        <span><i class="fas fa-building"></i> Department: <strong>${esc(job.department || 'Engineering')}</strong></span>
+                        <span><i class="fas fa-map-marker-alt"></i> Location: <strong>${esc(job.location || 'Pune / Hybrid')}</strong></span>
+                        <span><i class="fas fa-user-clock"></i> Experience: <strong>${esc(job.experience || 'Fresher / 0-2 Yrs')}</strong></span>
+                        <span style="color:#58a6ff;"><i class="fas fa-user-check"></i> <strong>${roleAppsCount} Candidate${roleAppsCount === 1 ? '' : 's'} Applied</strong></span>
+                    </div>
+                </div>
+                <div class="spb-actions">
+                    ${job.id ? `
+                    <button class="topbar-btn" onclick="toggleJobStatus(${job.id})" style="padding:6px 12px; font-size:12px;" title="Toggle active/inactive status for this role">
+                        <i class="fas ${job.is_active ? 'fa-pause' : 'fa-play'}"></i> ${job.is_active ? 'Pause Role' : 'Activate Role'}
+                    </button>` : ''}
+                    <button class="topbar-btn" onclick="selectRole(null)" style="padding:6px 12px; font-size:12px; border-color:#30363d;" title="Clear role filter and view all roles">
+                        <i class="fas fa-times"></i> View All Roles
+                    </button>
+                </div>
+            </div>
+            ${skillsHtml ? `
+            <div class="spb-skills-row">
+                <strong style="color:#e6edf3;"><i class="fas fa-tags" style="color:#a78bfa;"></i> Key Skills:</strong>
+                ${skillsHtml}
+            </div>` : ''}
+            ${job.description ? `
+            <div style="font-size:12px; color:#8b949e; line-height:1.5; background:rgba(0,0,0,0.25); padding:8px 12px; border-radius:8px; border:1px solid #21262d;">
+                ${esc(job.description)}
+            </div>` : ''}
+        `;
+    }
+
+    // ── Restore Application from Inactive / Archived ─────────────────────────
+    async function restoreApp(mapKey) {
+        const app = _appMap[mapKey];
+        if (!app) return;
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/login/?next=/hr/';
+            return;
+        }
+
+        try {
+            const res = await hrFetch('/hr/restore-application/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: app.id, type: app.type })
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.error || 'Failed to restore application');
+            }
+
+            showToast(`✅ ${app.full_name}'s application restored to active panel!`, 'success');
+            await loadApplications();
+            await loadJobPostings();
+        } catch (err) {
+            console.error('Restore application error:', err);
+            showToast(err.message || 'Could not restore application.', 'error');
+        }
+    }
+
+    // ── Campus Venues Across Vacancy States & Fixed Interview Rounds Presets ──
+    const CAMPUS_ADDRESSES = {
+        'bengaluru': 'Zensar Technologies Ltd, Level 4, Brigade Tech Park, Pattandur Agrahara Road, Whitefield, Bengaluru, Karnataka 560066',
+        'hyderabad': 'Zensar Technologies Ltd, 5th Floor, Cyber Pearl Building, Hitec City, Madhapur, Hyderabad, Telangana 500081',
+        'chennai_dlf': 'Zensar Technologies Ltd, Block 7, 3rd Floor, DLF IT Park, 1/124 Mount Poonamallee Road, Manapakkam, Chennai, Tamil Nadu 600089',
+        'chennai_omr': 'Zensar Technologies Ltd, Rajiv Gandhi Salai (OMR), Navalur, Chennai, Tamil Nadu 600130',
+        'pune_hq': 'Zensar Technologies Ltd, Zensar Knowledge Park, Plot #4, Kharadi, MIDC, Off Nagar Road, Pune, Maharashtra 411014'
+    };
+
+    function resolveCampusAddress(locStr) {
+        const loc = String(locStr || '').toLowerCase();
+        if (loc.includes('bengaluru') || loc.includes('bangalore') || loc.includes('karnataka') || loc.includes('whitefield')) {
+            return CAMPUS_ADDRESSES['bengaluru'];
+        }
+        if (loc.includes('hyderabad') || loc.includes('telangana') || loc.includes('andhra') || loc.includes('hitec')) {
+            return CAMPUS_ADDRESSES['hyderabad'];
+        }
+        if (loc.includes('omr')) {
+            return CAMPUS_ADDRESSES['chennai_omr'];
+        }
+        if (loc.includes('chennai') || loc.includes('tamil') || loc.includes('dlf')) {
+            return CAMPUS_ADDRESSES['chennai_dlf'];
+        }
+        if (loc.includes('pune') || loc.includes('maharashtra') || loc.includes('kharadi')) {
+            return CAMPUS_ADDRESSES['pune_hq'];
+        }
+        return CAMPUS_ADDRESSES['chennai_dlf'];
+    }
+
+    function setAcceptVenue(key) {
+        if (CAMPUS_ADDRESSES[key]) {
+            document.getElementById('acceptVenueAddress').value = CAMPUS_ADDRESSES[key];
+        }
+    }
+
+    function setMsgVenue(key) {
+        if (CAMPUS_ADDRESSES[key]) {
+            document.getElementById('msgVenueAddress').value = CAMPUS_ADDRESSES[key];
+        }
+    }
+
+    const ROUNDS_PRESETS = {
+        'job': [
+            { name: 'Round 1: Aptitude Assessment & Logical Reasoning', duration: '30 Mins', desc: 'In-person quantitative aptitude, logical reasoning, verbal ability, and analytical problem-solving assessment at our campus lab.' },
+            { name: 'Round 2: Technical Interview & Live Problem Solving', duration: '45 Mins', desc: 'In-person core technical domain deep-dive, hands-on programming/coding evaluation, system architecture, and project walkthrough with technical leads.' },
+            { name: 'Round 3: HR Discussion & Culture Fitment', duration: '30 Mins', desc: 'In-person discussion on cultural fitment, career roadmap, role expectations, compensation details, and joining schedule.' }
+        ],
+        'internship': [
+            { name: 'Round 1: In-Person HR Interview & Profile Assessment', duration: '30 Mins', desc: 'Direct in-person interview at company campus reviewing academic background, project achievements, internship duration, cultural fitment, and onboarding formalities.' }
+        ]
+    };
+
+    function renderRoundsPreview(trackType) {
+        const isIntern = (trackType === 'internship');
+        const rounds = isIntern ? ROUNDS_PRESETS['internship'] : ROUNDS_PRESETS['job'];
+        const container = document.getElementById('acceptRoundsPreview');
+        const subtitle = document.getElementById('acceptRoundsSubtitle');
+        if (subtitle) {
+            subtitle.textContent = isIntern ? '1 In-Person HR Round (30 Mins)' : '3 In-Person Fixed Rounds (Aptitude 30m → Technical 45m → HR 30m)';
+        }
+        if (!container) return;
+        container.innerHTML = rounds.map((r, i) => `
+            <div style="margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid #21262d;">
+                <div style="font-weight:600; color:#34d399; display:flex; justify-content:space-between;">
+                    <span>${esc(r.name)}</span>
+                    <span style="background:rgba(52,211,153,0.15); color:#34d399; font-size:11px; padding:1px 6px; border-radius:10px;">⏱ ${esc(r.duration)}</span>
+                </div>
+                <div style="font-size:11px; color:#8b949e; margin-top:2px;">${esc(r.desc)}</div>
+            </div>
+        `).join('');
+    }
+
+    function getNextBusinessDate() {
+        const d = new Date();
+        d.setDate(d.getDate() + 2);
+        if (d.getDay() === 6) d.setDate(d.getDate() + 2);
+        else if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function formatScheduleString(dVal, tVal) {
+        if (!dVal) return '';
+        const [year, month, day] = dVal.split('-');
+        const [hours, minutes] = (tVal || '10:30').split(':');
+        const d = new Date(year, month - 1, day, hours, minutes);
+        const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `${dateStr}, ${timeStr} IST`;
+    }
+
+    function syncAcceptDateTime() {
+        const dVal = document.getElementById('acceptDatePick').value;
+        const tVal = document.getElementById('acceptTimePick').value;
+        const text = formatScheduleString(dVal, tVal);
+        document.getElementById('acceptScheduledTime').value = text;
+        const badge = document.getElementById('acceptScheduleBadge');
+        if (badge) badge.textContent = text ? `✓ ${text}` : '';
+    }
+
+    function setAcceptSlotTime(timeVal) {
+        document.getElementById('acceptTimePick').value = timeVal;
+        syncAcceptDateTime();
+    }
+
+    function syncMsgDateTime() {
+        const dVal = document.getElementById('msgDatePick').value;
+        const tVal = document.getElementById('msgTimePick').value;
+        const text = formatScheduleString(dVal, tVal);
+        document.getElementById('msgScheduledTime').value = text;
+        const badge = document.getElementById('msgScheduleBadge');
+        if (badge) badge.textContent = text ? `✓ ${text}` : '';
+    }
+
+    function setMsgSlotTime(timeVal) {
+        document.getElementById('msgTimePick').value = timeVal;
+        syncMsgDateTime();
+    }
+
+    function getDefaultInterviewSchedule() {
+        const d = new Date();
+        d.setDate(d.getDate() + 2);
+        if (d.getDay() === 6) d.setDate(d.getDate() + 2); // Saturday -> Monday
+        else if (d.getDay() === 0) d.setDate(d.getDate() + 1); // Sunday -> Monday
+        const options = { day: 'numeric', month: 'short', year: 'numeric' };
+        return `${d.toLocaleDateString('en-GB', options)}, 10:30 AM IST`;
+    }
+
+    function openAcceptModal(mapKey) {
+        const app = _appMap[mapKey];
+        if (!app) return;
+        document.getElementById('acceptMapKey').value = mapKey;
+        document.getElementById('acceptCandidateName').textContent = `${app.full_name} (${app.role})`;
+        document.getElementById('acceptCandidateMeta').textContent = `Email: ${app.email} • Track: ${app.type.toUpperCase()}`;
+        
+        // Initialize date & time pickers
+        const defDate = getNextBusinessDate();
+        document.getElementById('acceptDatePick').value = defDate;
+        document.getElementById('acceptTimePick').value = '10:30';
+        syncAcceptDateTime();
+
+        const isIntern = (app.type === 'internship');
+        const badgeEl = document.getElementById('acceptTrackBadge');
+        if (badgeEl) {
+            if (isIntern) {
+                badgeEl.style.background = 'rgba(168, 85, 247, 0.12)';
+                badgeEl.style.border = '1px solid rgba(168, 85, 247, 0.3)';
+                badgeEl.style.color = '#c084fc';
+                badgeEl.innerHTML = '<i class="fas fa-graduation-cap"></i> <strong>Internship Track:</strong> Fixed 1 In-Person HR Round (30 Mins)';
+            } else {
+                badgeEl.style.background = 'rgba(34, 197, 94, 0.12)';
+                badgeEl.style.border = '1px solid rgba(34, 197, 94, 0.3)';
+                badgeEl.style.color = '#4ade80';
+                badgeEl.innerHTML = '<i class="fas fa-briefcase"></i> <strong>Job Track:</strong> Fixed 3 In-Person Rounds (Aptitude 30m · Technical 45m · HR 30m)';
+            }
+        }
+
+        renderRoundsPreview(app.type);
+
+        // Pre-fill campus venue across vacancy states based on candidate location / preference
+        const defaultVenue = resolveCampusAddress(app.preferred_location || app.location || '');
+        document.getElementById('acceptVenueAddress').value = defaultVenue;
+        document.getElementById('acceptNotes').value = 'Please arrive 15 minutes before your scheduled start time with your valid photo ID proof and 2 printed hardcopies of your resume.';
+        document.getElementById('acceptModal').classList.add('show');
+    }
+
+    function closeAcceptModal() {
+        document.getElementById('acceptModal').classList.remove('show');
+    }
+
+    async function submitAcceptApplication(e) {
+        e.preventDefault();
+        const mapKey = document.getElementById('acceptMapKey').value;
+        const app = _appMap[mapKey];
+        if (!app) return;
+
+        const scheduled_time = document.getElementById('acceptScheduledTime').value.trim();
+        const venue_address = document.getElementById('acceptVenueAddress').value.trim();
+        const isIntern = (app.type === 'internship');
+        const total_rounds = isIntern ? '1 Round (HR Round)' : '3 Rounds (Aptitude, Technical, HR)';
+        const rounds_details = isIntern ? ROUNDS_PRESETS['internship'] : ROUNDS_PRESETS['job'];
+        const notes = document.getElementById('acceptNotes').value.trim();
+
+        const btn = document.getElementById('btnConfirmAccept');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending Call Letter...';
+
+        try {
+            await performStatusUpdate(mapKey, 'selected', {
+                scheduled_time: scheduled_time,
+                total_rounds: total_rounds,
+                rounds_details: rounds_details,
+                venue_address: venue_address,
+                notes: notes,
+            });
+            closeAcceptModal();
+        } catch (err) {
+            console.error('Accept application failed:', err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Accept & Send Call Letter';
+        }
+    }
+
+    // ── Update status dispatcher ─────────────────────────────────────────────
+    function updateStatus(mapKey, newStatus) {
+        if (newStatus === 'selected') {
+            openAcceptModal(mapKey);
+            return;
+        }
+
+        let reason = '';
+        if (newStatus === 'rejected') {
+            const app = _appMap[mapKey];
+            reason = prompt(`Please provide a reason for rejecting ${app ? app.full_name : 'the candidate'}:`, '');
+            if (reason === null) {
+                // User cancelled the prompt
+                return;
+            }
+        }
+
+        performStatusUpdate(mapKey, newStatus, { reason: reason });
+    }
+
+    async function performStatusUpdate(mapKey, newStatus, extraData = {}) {
+        const app = _appMap[mapKey];
+        if (!app) { showToast('Application data not found. Please refresh.', 'error'); return; }
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/login/?next=/hr/';
+            return;
+        }
+
+        // Disable all buttons in this card during update
+        const actionDiv = document.getElementById('actions-' + mapKey);
+        const btns = actionDiv ? actionDiv.querySelectorAll('button') : [];
+        btns.forEach(b => b.disabled = true);
+
+        const statusLabels = {
+            under_review: 'Under Review',
+            shortlisted:  'Shortlisted',
+            selected:     'Accepted ✅',
+            rejected:     'Rejected ❌',
+        };
+
+        try {
+            const payload = {
+                id: app.id,
+                type: app.type,
+                status: newStatus,
+                ...extraData,
+            };
+
+            const res = await hrFetch('/hr/update-status/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                if (res.status === 401) return;
+                throw new Error(data.error || data.detail || `Request failed (${res.status})`);
+            }
+
+            // Update local app data
+            const idx = _allApps.findIndex(a => a.id === app.id && a.type === app.type);
+            if (idx !== -1) {
+                _allApps[idx].status         = data.new_status;
+                _allApps[idx].status_display = data.new_status_display;
+                _appMap[mapKey].status         = data.new_status;
+                _appMap[mapKey].status_display = data.new_status_display;
+            }
+
+            // Update badge
+            const badge = document.getElementById('badge-' + mapKey);
+            if (badge) {
+                badge.className = `status-badge-hr sb-${newStatus}`;
+                badge.innerHTML = `<span class="dot"></span>${esc(data.new_status_display)}`;
+            }
+
+            // Rebuild action buttons
+            if (actionDiv) {
+                const updated = _allApps[idx];
+                const sk = updated.status;
+                const btnR = sk !== 'under_review' ? `<button class="act-btn btn-review"    onclick="updateStatus('${mapKey}','under_review')"><i class="fas fa-search"></i> Under Review</button>` : '';
+                const btnS = sk !== 'shortlisted'  ? `<button class="act-btn btn-shortlist" onclick="updateStatus('${mapKey}','shortlisted')"><i class="fas fa-star"></i> Shortlist</button>` : '';
+                const btnA = sk !== 'selected'     ? `<button class="act-btn btn-accept"    onclick="updateStatus('${mapKey}','selected')"><i class="fas fa-check"></i> Accept</button>` : '';
+                const btnRj= sk !== 'rejected'     ? `<button class="act-btn btn-reject"    onclick="updateStatus('${mapKey}','rejected')"><i class="fas fa-times"></i> Reject</button>` : '';
+                const btnRm= `<button class="act-btn btn-remove" onclick="askRemoveApp('${mapKey}')" title="Remove application"><i class="fas fa-trash-alt"></i> Remove</button>`;
+                const lResume = updated.resume_url ? `<a href="${updated.resume_url}" target="_blank" class="act-btn btn-doc"><i class="fas fa-file-pdf"></i> Resume</a>` : `<span class="act-btn btn-doc" style="opacity:0.4; cursor:not-allowed;"><i class="fas fa-file-pdf"></i> No Resume</span>`;
+                actionDiv.innerHTML = lResume + btnR + btnS + btnA + btnRj + btnRm;
+            }
+
+            // Toast message
+            if (newStatus === 'selected') {
+                const roundsLabel = extraData.total_rounds || '3 Rounds';
+                showToast(`✅ ${app.full_name} accepted! Selection email with ${roundsLabel} & attached resume sent.`, 'success');
+            } else if (newStatus === 'rejected') {
+                showToast(`❌ ${app.full_name} rejected. Notification email sent.`, 'info');
+            } else {
+                showToast(`Status updated to "${statusLabels[newStatus] || newStatus}"`, 'success');
+            }
+
+            // Update stats
+            renderStats();
+
+        } catch (err) {
+            console.error('Update status error:', err);
+            btns.forEach(b => b.disabled = false);
+            showToast(err.message || 'Update failed. Please try again.', 'error');
+            throw err;
+        }
+    }
+
+    // ── Bulk Selection & Removal ────────────────────────────────────────────
+    const _selectedKeys = new Set();
+
+    function updateBulkUI() {
+        const visibleCheckboxes = document.querySelectorAll('.app-chk');
+        const count = _selectedKeys.size;
+        const countEl = document.getElementById('bulkCount');
+        const delCountEl = document.getElementById('bulkDeleteCount');
+        const delBtn = document.getElementById('bulkDeleteBtn');
+        const selectAllChk = document.getElementById('selectAllCheckbox');
+
+        if (countEl) countEl.textContent = `${count} selected`;
+        if (delCountEl) delCountEl.textContent = count;
+        if (delBtn) {
+            delBtn.disabled = (count === 0);
+            if (_archivedFilter === 'true') {
+                delBtn.innerHTML = `<i class="fas fa-trash-alt"></i> Delete Selected Forever (<span id="bulkDeleteCount">${count}</span>)`;
+                delBtn.title = "Permanently delete selected archived applications from database (never come again)";
+            } else {
+                delBtn.innerHTML = `<i class="fas fa-trash-alt"></i> Remove Selected (<span id="bulkDeleteCount">${count}</span>)`;
+                delBtn.title = "Remove selected applications from active panel (moves to archive)";
+            }
+        }
+
+        if (selectAllChk) {
+            if (visibleCheckboxes.length === 0) {
+                selectAllChk.checked = false;
+                selectAllChk.indeterminate = false;
+            } else {
+                let allChecked = true;
+                let anyChecked = false;
+                visibleCheckboxes.forEach(c => {
+                    if (c.checked) anyChecked = true;
+                    else allChecked = false;
+                });
+                selectAllChk.checked = allChecked;
+                selectAllChk.indeterminate = (!allChecked && anyChecked);
+            }
+        }
+    }
+
+    function onItemChkChange(mapKey, checked) {
+        if (checked) {
+            _selectedKeys.add(mapKey);
+        } else {
+            _selectedKeys.delete(mapKey);
+        }
+        const card = document.getElementById('appcard-' + mapKey);
+        if (card) {
+            if (checked) card.classList.add('is-selected');
+            else card.classList.remove('is-selected');
+        }
+        updateBulkUI();
+    }
+
+    function toggleSelectAll(checked) {
+        const visibleCheckboxes = document.querySelectorAll('.app-chk');
+        visibleCheckboxes.forEach(chk => {
+            chk.checked = checked;
+            const mapKey = chk.getAttribute('data-mapkey');
+            if (checked) {
+                _selectedKeys.add(mapKey);
+            } else {
+                _selectedKeys.delete(mapKey);
+            }
+            const card = document.getElementById('appcard-' + mapKey);
+            if (card) {
+                if (checked) card.classList.add('is-selected');
+                else card.classList.remove('is-selected');
+            }
+        });
+        updateBulkUI();
+    }
+
+    let _pendingRemoveKey = null;
+    let _pendingIsPermanent = false;
+
+    function askBulkRemove() {
+        const count = _selectedKeys.size;
+        if (count === 0) return;
+
+        _pendingRemoveKey = 'BULK';
+        const isArchived = (_archivedFilter === 'true');
+        _pendingIsPermanent = isArchived;
+
+        const titleEl = document.getElementById('confirmRemoveTitle');
+        const msgEl = document.getElementById('confirmRemoveMsg');
+        const btnTextEl = document.getElementById('confirmRemoveBtnText');
+        const iconEl = document.getElementById('confirmRemoveIcon');
+
+        if (isArchived) {
+            if (titleEl) titleEl.textContent = 'Permanently Remove from HR Panel?';
+            if (msgEl) msgEl.textContent = `Permanently remove all ${count} selected application${count > 1 ? 's' : ''} from the HR panel? They will NEVER appear in the HR panel again. Candidate profiles and resumes in user chatbot remain completely preserved.`;
+            if (btnTextEl) btnTextEl.textContent = `Delete ${count} Forever`;
+            if (iconEl) {
+                iconEl.className = 'fas fa-trash-alt';
+                iconEl.style.color = '#ef4444';
+            }
+        } else {
+            if (titleEl) titleEl.textContent = 'Remove Applications from HR Panel?';
+            if (msgEl) msgEl.textContent = `Remove all ${count} selected application${count > 1 ? 's' : ''} from the HR panel? (They will be moved to the Archived tab). Candidate profiles in chatbot are preserved.`;
+            if (btnTextEl) btnTextEl.textContent = `Remove ${count}`;
+            if (iconEl) {
+                iconEl.className = 'fas fa-archive';
+                iconEl.style.color = '#f87171';
+            }
+        }
+        document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    // ── Remove application (Delete / Permanent Delete) ───────────────────────
+    function askRemoveApp(mapKey, isPermanent = false) {
+        const app = _appMap[mapKey];
+        if (!app) return;
+        _pendingRemoveKey = mapKey;
+        _pendingIsPermanent = isPermanent || Boolean(app.hr_archived);
+
+        const titleEl = document.getElementById('confirmRemoveTitle');
+        const msgEl = document.getElementById('confirmRemoveMsg');
+        const btnTextEl = document.getElementById('confirmRemoveBtnText');
+        const iconEl = document.getElementById('confirmRemoveIcon');
+
+        if (_pendingIsPermanent) {
+            if (titleEl) titleEl.textContent = 'Permanently Remove from HR Panel?';
+            if (msgEl) msgEl.textContent = `Permanently remove the application for ${esc(app.full_name)} (${esc(app.role)}) from the HR panel? It will NEVER appear in the HR panel again. Candidate profile and resume in user chatbot will remain safely preserved.`;
+            if (btnTextEl) btnTextEl.textContent = 'Delete Forever';
+            if (iconEl) {
+                iconEl.className = 'fas fa-trash-alt';
+                iconEl.style.color = '#ef4444';
+            }
+        } else {
+            if (titleEl) titleEl.textContent = 'Remove Application from HR Panel?';
+            if (msgEl) msgEl.textContent = `Remove the application for ${esc(app.full_name)} (${esc(app.role)}) from active panel? It will be moved to Archived. Candidate chatbot profile is always preserved.`;
+            if (btnTextEl) btnTextEl.textContent = 'Remove';
+            if (iconEl) {
+                iconEl.className = 'fas fa-archive';
+                iconEl.style.color = '#f87171';
+            }
+        }
+
+        document.getElementById('confirmOverlay').classList.add('show');
+    }
+
+    document.getElementById('cancelRemoveBtn').onclick = () => {
+        _pendingRemoveKey = null;
+        _pendingIsPermanent = false;
+        document.getElementById('confirmOverlay').classList.remove('show');
+    };
+
+    document.getElementById('confirmOverlay').onclick = (e) => {
+        if (e.target === document.getElementById('confirmOverlay')) {
+            _pendingRemoveKey = null;
+            _pendingIsPermanent = false;
+            document.getElementById('confirmOverlay').classList.remove('show');
+        }
+    };
+
+    document.getElementById('confirmRemoveBtn').onclick = async () => {
+        if (!_pendingRemoveKey) return;
+        const removeType = _pendingRemoveKey;
+        const isPermanent = _pendingIsPermanent;
+        _pendingRemoveKey = null;
+        _pendingIsPermanent = false;
+        document.getElementById('confirmOverlay').classList.remove('show');
+
+        const token = getToken();
+        if (!token) {
+            window.location.href = '/login/?next=/hr/';
+            return;
+        }
+
+        const confirmBtn = document.getElementById('confirmRemoveBtn');
+        confirmBtn.disabled = true;
+
+        if (removeType === 'BULK') {
+            const count = _selectedKeys.size;
+            if (count === 0) { confirmBtn.disabled = false; return; }
+
+            const items = [];
+            _selectedKeys.forEach(key => {
+                const app = _appMap[key];
+                if (app) items.push({ id: app.id, type: app.type });
+            });
+
+            try {
+                const res = await hrFetch('/hr/delete-application/', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ items: items, permanent: isPermanent }),
+                });
+
+                if (!res.ok) {
+                    const data = await res.json().catch(() => ({}));
+                    throw new Error(data.error || 'Failed to remove applications');
+                }
+
+                // Animate out all selected cards
+                _selectedKeys.forEach(mapKey => {
+                    const card = document.getElementById('appcard-' + mapKey);
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.transform = 'scale(0.9)';
+                        card.style.opacity = '0';
+                        setTimeout(() => card.remove(), 300);
+                    }
+                    const app = _appMap[mapKey];
+                    if (app) {
+                        _allApps = _allApps.filter(a => !(a.id === app.id && a.type === app.type));
+                        delete _appMap[mapKey];
+                    }
+                });
+
+                _selectedKeys.clear();
+                setTimeout(() => {
+                    renderStats();
+                    updateBulkUI();
+                    renderRolesSidebar();
+                    fetchInactiveCandidateCount();
+                    if (_allApps.length === 0) renderList();
+                }, 320);
+
+                if (isPermanent) {
+                    showToast(`✅ ${count} application${count > 1 ? 's' : ''} permanently removed from HR panel. Chatbot profile preserved.`, 'success');
+                } else {
+                    showToast(`✅ ${count} application${count > 1 ? 's' : ''} moved to archive.`, 'success');
+                }
+
+            } catch (err) {
+                console.error('Bulk remove error:', err);
+                showToast(err.message || 'Could not remove selected applications.', 'error');
+            } finally {
+                confirmBtn.disabled = false;
+            }
+            return;
+        }
+
+        // Single application delete
+        const mapKey = removeType;
+        const app = _appMap[mapKey];
+        if (!app) { confirmBtn.disabled = false; return; }
+
+        try {
+            const res = await hrFetch('/hr/delete-application/', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: app.id, type: app.type, permanent: isPermanent }),
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.error || 'Failed to remove application');
+            }
+
+            // Animate card removal
+            const card = document.getElementById('appcard-' + mapKey);
+            if (card) {
+                card.style.transition = 'all 0.3s ease';
+                card.style.transform = 'scale(0.9)';
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // Remove from local arrays
+                    _allApps = _allApps.filter(a => !(a.id === app.id && a.type === app.type));
+                    delete _appMap[mapKey];
+                    _selectedKeys.delete(mapKey);
+                    renderStats();
+                    updateBulkUI();
+                    if (_allApps.length === 0) renderList();
+                }, 300);
+            }
+
+            if (isPermanent) {
+                showToast(`✅ Application for ${app.full_name} permanently removed from HR panel. Chatbot profile preserved.`, 'success');
+            } else {
+                showToast(`Application for ${app.full_name} moved to archive.`, 'success');
+            }
+            fetchInactiveCandidateCount();
+            renderRolesSidebar();
+
+        } catch (err) {
+            console.error('Remove application error:', err);
+            showToast(err.message || 'Could not remove application.', 'error');
+        } finally {
+            confirmBtn.disabled = false;
+        }
+    };
+
+    // ── CSRF cookie helper ───────────────────────────────────────────
+    function getCookie(name) {
+        const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[]\\])/g,'\\$1') + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    // ── Dynamic Job Openings Management ──────────────────────────────
+    let _allJobs = [];
+
+    async function loadJobPostings() {
+        const token = getToken();
+        if (!token) return;
+        try {
+            const res = await hrFetch('/hr/jobs/');
+            if (!res.ok) return;
+            const data = await res.json();
+            _allJobs = data.jobs || [];
+            const countEl = document.getElementById('topbarJobCount');
+            if (countEl) countEl.textContent = _allJobs.filter(j => j.is_active).length;
+            renderJobsList();
+            renderRolesSidebar();
+            renderSelectedPostBanner();
+        } catch (e) {
+            console.error('Error fetching job postings:', e);
+        }
+    }
+
+    function renderJobsList() {
+        const container = document.getElementById('jobsModalBody');
+        if (!container) return;
+        if (!_allJobs.length) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; color:#8b949e;">
+                    <i class="fas fa-briefcase" style="font-size:38px; color:#30363d; margin-bottom:12px; display:block;"></i>
+                    <p>No job openings found. Click "+ New Role" above to create one!</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = _allJobs.map(job => {
+            const isAct = job.is_active;
+            const badgeClass = job.job_type === 'internship' ? 'internship' : 'job';
+            const badgeText = job.job_type === 'internship' ? 'Internship' : 'Full-time Job';
+            const statusClass = isAct ? 'active' : 'closed';
+            const statusText = isAct ? 'Active' : 'Closed';
+            const toggleClass = isAct ? 'btn-pause' : 'btn-resume';
+            const toggleIcon = isAct ? 'fa-pause' : 'fa-play';
+            const toggleText = isAct ? 'Pause' : 'Activate';
+
+            return `
+            <div class="job-item-card">
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+                        <h4 style="font-size:15px; font-weight:600; color:#e6edf3; margin:0;">${esc(job.title)}</h4>
+                        <span class="job-badge ${badgeClass}">${badgeText}</span>
+                        <span class="job-status-pill ${statusClass}">${statusText}</span>
+                    </div>
+                    <div style="font-size:12px; color:#8b949e; display:flex; gap:14px; flex-wrap:wrap;">
+                        <span><i class="fas fa-building"></i> ${esc(job.department)}</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${esc(job.location)}</span>
+                        <span><i class="fas fa-user-clock"></i> ${esc(job.experience)}</span>
+                        <span style="color:#58a6ff;"><i class="fas fa-users"></i> ${job.applicant_count} applicant${job.applicant_count === 1 ? '' : 's'}</span>
+                    </div>
+                    ${job.skills ? `<div style="font-size:11px; color:#6e7681; margin-top:5px;"><i class="fas fa-tags"></i> ${esc(job.skills)}</div>` : ''}
+                </div>
+                <div class="job-actions">
+                    <button class="btn-toggle-job ${toggleClass}" onclick="toggleJobStatus(${job.id})">
+                        <i class="fas ${toggleIcon}"></i> ${toggleText}
+                    </button>
+                    <button class="btn-delete-job" onclick="deleteJobPosting(${job.id}, '${esc(job.title)}')" title="Delete Opening">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── Visual Analytics & BI Functions ─────────────────────────────────────
+    let _chartFunnel = null;
+    let _chartRoles = null;
+    let _chartScores = null;
+    let _chartLocations = null;
+
+    function openAnalyticsModal() {
+        document.getElementById('analyticsModal').classList.add('show');
+        loadAnalyticsData();
+    }
+
+    function closeAnalyticsModal() {
+        document.getElementById('analyticsModal').classList.remove('show');
+    }
+
+    async function loadAnalyticsData() {
+        const icon = document.getElementById('analyticsRefreshIcon');
+        if (icon) icon.classList.add('fa-spin');
+        try {
+            const res = await hrFetch('/api/v1/hr/analytics/');
+            if (!res.ok) {
+                showToast('Failed to load analytics data', 'error');
+                return;
+            }
+            const data = await res.json();
+            renderAnalytics(data);
+        } catch (err) {
+            console.error('Analytics load error:', err);
+            showToast('Error loading analytics', 'error');
+        } finally {
+            if (icon) icon.classList.remove('fa-spin');
+        }
+    }
+
+    function renderAnalytics(data) {
+        if (!data) return;
+        const kpis = data.kpis || {};
+        const funnel = data.funnel || {};
+        const typeSplit = data.type_split || {};
+
+        const elTotal = document.getElementById('kpiTotal');
+        if (elTotal) elTotal.textContent = kpis.total_candidates ?? 0;
+
+        const elTypeSplit = document.getElementById('kpiTypeSplit');
+        if (elTypeSplit) elTypeSplit.textContent = `${typeSplit.jobs || 0} Jobs, ${typeSplit.internships || 0} Interns`;
+
+        const elSelectRate = document.getElementById('kpiSelectRate');
+        if (elSelectRate) elSelectRate.textContent = `${kpis.selection_rate ?? 0}%`;
+
+        const elSelCount = document.getElementById('kpiSelectedCount');
+        if (elSelCount) elSelCount.textContent = `${kpis.selected_count ?? 0} selected`;
+
+        const elAvgScore = document.getElementById('kpiAvgScore');
+        if (elAvgScore) elAvgScore.textContent = `${kpis.average_ats_score ?? 0}%`;
+
+        const elReviewRate = document.getElementById('kpiReviewRate');
+        if (elReviewRate) elReviewRate.textContent = `${kpis.review_rate ?? 0}%`;
+
+        const elOpenings = document.getElementById('kpiOpenings');
+        if (elOpenings) elOpenings.textContent = kpis.active_openings ?? 0;
+
+        const elVacancies = document.getElementById('kpiVacancies');
+        if (elVacancies) elVacancies.textContent = `${kpis.total_vacancies ?? 0} vacancies`;
+
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded yet');
+            return;
+        }
+
+        Chart.defaults.color = '#8b949e';
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+
+        // 1. Funnel Bar Chart
+        const ctxFunnel = document.getElementById('chartFunnel');
+        if (ctxFunnel) {
+            if (_chartFunnel) _chartFunnel.destroy();
+            _chartFunnel = new Chart(ctxFunnel, {
+                type: 'bar',
+                data: {
+                    labels: ['Applied', 'Pending', 'Review', 'Shortlist', 'Selected', 'Rejected'],
+                    datasets: [{
+                        label: 'Candidates',
+                        data: [funnel.total || 0, funnel.pending || 0, funnel.under_review || 0, funnel.shortlisted || 0, funnel.selected || 0, funnel.rejected || 0],
+                        backgroundColor: ['#388bfd', '#f59e0b', '#60a5fa', '#a78bfa', '#4ade80', '#f87171'],
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: '#21262d' }, beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        // 2. Roles Doughnut Chart
+        const ctxRoles = document.getElementById('chartRoles');
+        if (ctxRoles) {
+            if (_chartRoles) _chartRoles.destroy();
+            const roleItems = data.roles_distribution || [];
+            const roleLabels = roleItems.map(r => r.role.length > 20 ? r.role.substring(0, 18) + '...' : r.role);
+            const roleCounts = roleItems.map(r => r.count);
+            _chartRoles = new Chart(ctxRoles, {
+                type: 'doughnut',
+                data: {
+                    labels: roleLabels.length ? roleLabels : ['No Roles'],
+                    datasets: [{
+                        data: roleCounts.length ? roleCounts : [1],
+                        backgroundColor: ['#60a5fa', '#a78bfa', '#34d399', '#f472b6', '#fbbf24', '#38bdf8', '#818cf8', '#fb7185'],
+                        borderWidth: 1,
+                        borderColor: '#161b22'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // 3. ATS Score Histogram
+        const ctxScores = document.getElementById('chartScores');
+        if (ctxScores) {
+            if (_chartScores) _chartScores.destroy();
+            const scoreDist = data.score_distribution || {};
+            _chartScores = new Chart(ctxScores, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(scoreDist),
+                    datasets: [{
+                        label: 'Applicants',
+                        data: Object.values(scoreDist),
+                        backgroundColor: ['#f87171', '#fbbf24', '#60a5fa', '#4ade80'],
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: '#21262d' }, beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        }
+
+        // 4. Locations Horizontal Bar
+        const ctxLocs = document.getElementById('chartLocations');
+        if (ctxLocs) {
+            if (_chartLocations) _chartLocations.destroy();
+            const locItems = data.locations_distribution || [];
+            _chartLocations = new Chart(ctxLocs, {
+                type: 'bar',
+                data: {
+                    labels: locItems.map(l => l.location),
+                    datasets: [{
+                        label: 'Applicants',
+                        data: locItems.map(l => l.count),
+                        backgroundColor: '#818cf8',
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#21262d' }, beginAtZero: true, ticks: { precision: 0 } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    }
+
+    function openJobsModal() {
+        document.getElementById('jobsModal').classList.add('show');
+        loadJobPostings();
+    }
+    function closeJobsModal() {
+        document.getElementById('jobsModal').classList.remove('show');
+    }
+
+    function openCreateJobModal() {
+        document.getElementById('createJobModal').classList.add('show');
+    }
+    function closeCreateJobModal() {
+        document.getElementById('createJobModal').classList.remove('show');
+    }
+
+    async function submitCreateJob(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSubmitJob');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publishing...';
+
+        const token = getToken();
+        const title = document.getElementById('newJobTitle').value.trim();
+        const job_type = document.getElementById('newJobType').value;
+        const department = document.getElementById('newJobDept').value.trim();
+        const location = document.getElementById('newJobLoc').value.trim();
+        const experience = document.getElementById('newJobExp').value.trim();
+        const skills = document.getElementById('newJobSkills').value.trim();
+        const description = document.getElementById('newJobDesc').value.trim();
+
+        try {
+            const res = await hrFetch('/hr/jobs/create/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, job_type, department, location, experience, skills, description })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to post job');
+
+            showToast(`✅ '${title}' published successfully!`, 'success');
+            document.getElementById('createJobForm').reset();
+            closeCreateJobModal();
+            loadJobPostings();
+        } catch (err) {
+            showToast(err.message || 'Error posting job', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Publish Opening';
+        }
+    }
+
+    async function toggleJobStatus(jobId) {
+        try {
+            const res = await hrFetch('/hr/jobs/toggle/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: jobId })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to toggle status');
+
+            showToast(data.message || 'Job status updated', 'success');
+            loadJobPostings();
+        } catch (err) {
+            showToast(err.message || 'Error updating status', 'error');
+        }
+    }
+
+    async function deleteJobPosting(jobId, jobTitle) {
+        if (!confirm(`Are you sure you want to permanently delete '${jobTitle}'?`)) return;
+        try {
+            const res = await hrFetch('/hr/jobs/delete/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: jobId })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to delete job');
+
+            showToast(data.message || 'Opening deleted', 'success');
+            loadJobPostings();
+        } catch (err) {
+            showToast(err.message || 'Error deleting job', 'error');
+        }
+    }
+
+    // ── Candidate Direct Messaging & Interview Scheduling ────────────────────
+    function openMessageModal(mapKey) {
+        const app = _appMap[mapKey];
+        if (!app) return;
+        document.getElementById('msgAppId').value = app.id;
+        document.getElementById('msgAppType').value = app.type;
+        document.getElementById('msgCandidateName').textContent = `${app.full_name} (${app.role})`;
+        document.getElementById('msgCandidateMeta').textContent = `Email: ${app.email} • Track: ${app.type.toUpperCase()}`;
+        document.getElementById('msgSubject').value = `In-Person Interview Invitation — ${app.role}`;
+        
+        // Initialize message date & time pickers
+        const defMsgDate = getNextBusinessDate();
+        document.getElementById('msgDatePick').value = defMsgDate;
+        document.getElementById('msgTimePick').value = '10:30';
+        syncMsgDateTime();
+
+        const defaultVenue = resolveCampusAddress(app.preferred_location || app.location || '');
+        document.getElementById('msgVenueAddress').value = defaultVenue;
+        document.getElementById('msgBody').value = `Dear ${app.full_name},\n\nWe have reviewed your application for the ${app.role} position and are pleased to invite you for an in-person interview at our company campus.\n\nPlease find the scheduled date, time, and campus venue address details below. Please arrive 15 minutes before your scheduled start time with your valid photo ID proof and 2 printed hardcopies of your resume. Looking forward to meeting you!`;
+
+        // Render previous communications history if any
+        const histBox = document.getElementById('msgHistoryBox');
+        const histList = document.getElementById('msgHistoryList');
+        if (app.messages && app.messages.length > 0) {
+            histList.innerHTML = app.messages.map(m => `
+                <div style="border-bottom:1px solid #21262d; padding:6px 0; margin-bottom:4px;">
+                    <div style="font-weight:600; color:#58a6ff; font-size:12px;">${esc(m.subject)} <span style="font-weight:400; font-size:11px; color:#8b949e;">(${esc(m.created_at)})</span></div>
+                    <div style="color:#e6edf3; font-size:12px; margin-top:2px;">${esc(m.message)}</div>
+                    ${m.scheduled_time ? `<div style="color:#34d399; font-size:11px; margin-top:3px;"><i class="fas fa-calendar-alt"></i> Interview: ${esc(m.scheduled_time)}</div>` : ''}
+                    ${m.venue_address ? `<div style="color:#38bdf8; font-size:11px; margin-top:1px;"><i class="fas fa-building"></i> Campus Venue: ${esc(m.venue_address)}</div>` : ''}
+                </div>
+            `).join('');
+            histBox.style.display = 'block';
+        } else {
+            histBox.style.display = 'none';
+        }
+
+        document.getElementById('candidateMessageModal').classList.add('show');
+    }
+
+    function closeMessageModal() {
+        document.getElementById('candidateMessageModal').classList.remove('show');
+    }
+
+    async function submitCandidateMessage(e) {
+        e.preventDefault();
+        const token = getToken();
+        if (!token) {
+            showToast('Session expired. Please log in.', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('btnSendCandidateMsg');
+        const appId = document.getElementById('msgAppId').value;
+        const appType = document.getElementById('msgAppType').value;
+        const subject = document.getElementById('msgSubject').value.trim();
+        const scheduled_time = document.getElementById('msgScheduledTime').value.trim();
+        const venue_address = document.getElementById('msgVenueAddress').value.trim();
+        const message = document.getElementById('msgBody').value.trim();
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+        try {
+            const res = await hrFetch('/hr/messages/send/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    application_id: appId,
+                    application_type: appType,
+                    subject: subject,
+                    scheduled_time: scheduled_time,
+                    venue_address: venue_address,
+                    message: message
+                })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Failed to send message');
+
+            showToast('✅ Message & interview invitation sent successfully!', 'success');
+            closeMessageModal();
+            // Automatically refresh to display updated communication badge
+            loadApplications(true);
+        } catch (err) {
+            showToast(err.message || 'Error sending message', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message & Invitation';
+        }
+    }
+
+    // ── Export Candidates to CSV Spreadsheet ─────────────────────────────────
+    async function exportCandidatesCSV() {
+        const token = getToken();
+        if (!token) {
+            showToast('Session expired. Please log in.', 'error');
+            return;
+        }
+        showToast('Preparing candidate CSV spreadsheet...', 'info');
+        try {
+            const url = new URL('/hr/export-csv/', window.location.origin);
+            if (_activeFilter && _activeFilter !== 'all') {
+                url.searchParams.set('status', _activeFilter);
+            }
+            if (_typeFilter) {
+                url.searchParams.set('type', _typeFilter);
+            }
+            if (_selectedRole) {
+                url.searchParams.set('role', _selectedRole);
+            }
+            if (_archivedFilter && _archivedFilter !== 'false') {
+                url.searchParams.set('archived', _archivedFilter);
+            }
+
+            const res = await hrFetch(url.toString(), {
+                method: 'GET'
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || 'Failed to export CSV');
+            }
+
+            const blob = await res.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `zenbot_candidates_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(downloadUrl);
+            showToast('✅ Candidate export downloaded successfully!', 'success');
+        } catch (err) {
+            console.error('CSV Export Error:', err);
+            showToast(err.message || 'Error exporting CSV', 'error');
+        }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+        checkAuth();        // Redirect to login immediately if not authenticated
+        loadApplications(); // Load the applications
+        loadJobPostings();  // Load job openings count
+
+        window.addEventListener('firebaseAuthReady', () => {
+            if (!_allApps || _allApps.length === 0) {
+                loadApplications();
+                loadJobPostings();
+            }
+        });
+
+        // 30s silent background auto-refresh for incoming applications and updates
+        setInterval(() => {
+            if (!document.hidden && !document.querySelector('.jobs-modal-overlay.show') && !_pendingRemoveKey) {
+                loadApplications();
+                loadJobPostings();
+            }
+        }, 30000);
+    });
+</script>
+
+</body>
+</html>
