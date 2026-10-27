@@ -55,6 +55,6 @@ USER zenbot
 # Expose application port
 EXPOSE 8000
 
-# Start production WSGI server (waitress — already in requirements.txt)
-# For Gunicorn: replace with: gunicorn Zenbot.wsgi:application --bind 0.0.0.0:8000 --workers 2
-CMD ["python", "-m", "waitress", "--port=8000", "--call", "Zenbot.wsgi:get_wsgi_application"]
+# Run database migrations and seed jobs before starting production WSGI server
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py createcachetable --noinput 2>/dev/null || true && python manage.py seed_jobs 2>/dev/null || true && python -m waitress --port=8000 --call Zenbot.wsgi:get_wsgi_application"]
+
