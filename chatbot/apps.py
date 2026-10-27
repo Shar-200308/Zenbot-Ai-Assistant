@@ -17,6 +17,10 @@ class ChatbotConfig(AppConfig):
         caught in development before reaching production.
         No external secrets manager required — works with plain environment variables.
         """
+        import sys
+        if any(arg in sys.argv for arg in ('collectstatic', 'makemigrations', 'migrate')):
+            return
+
         from django.conf import settings
 
         _INSECURE_SECRET_PATTERNS = [
