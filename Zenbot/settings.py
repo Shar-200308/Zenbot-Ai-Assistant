@@ -28,6 +28,13 @@ else:
     _hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1')
     ALLOWED_HOSTS = [h.strip() for h in _hosts_env.split(',') if h.strip()]
 
+# Automatic Render.com & Railway host configuration
+_render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
+if _render_host and '*' not in ALLOWED_HOSTS and _render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_host)
+if '.onrender.com' not in ALLOWED_HOSTS and '*' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.onrender.com')
+
 # Always add the SITE_URL hostname (e.g. cloudflare/ngrok tunnel) if configured
 _SITE_URL = os.getenv('SITE_URL', '').strip().rstrip('/')
 if _SITE_URL:
@@ -40,6 +47,8 @@ if _SITE_URL:
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'https://*.onrender.com',
+    'https://*.up.railway.app',
 ]
 _CSRF_ORIGINS_ENV = os.getenv('CSRF_TRUSTED_ORIGINS', '')
 if _CSRF_ORIGINS_ENV:
@@ -53,14 +62,22 @@ if _SITE_URL:
     if _full_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(_full_origin)
 
+if _render_host:
+    _render_origin = f"https://{_render_host}"
+    if _render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_render_origin)
+
 
 # ================= PRODUCTION SECURITY HEADERS =================
 # These only activate when DEBUG=False (safe in development)
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True                 # Force HTTPS
-    SECURE_HSTS_SECONDS = 31536000             # 1 year HSTS
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+    # Set to False by default: Reverse proxies (Render, Cloudflare, Railway)
+    # already terminate SSL and enforce HTTPS at the edge load balancer.
+    # Enabling Django internal SSL redirect behind edge proxies causes infinite 301 loops (ERR_TOO_MANY_REDIRECTS).
+    SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1')
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '0'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
     SESSION_COOKIE_SECURE = True               # Session cookie only on HTTPS
     CSRF_COOKIE_SECURE = True                  # CSRF cookie only on HTTPS
     SECURE_CONTENT_TYPE_NOSNIFF = True         # Prevent MIME sniffing
