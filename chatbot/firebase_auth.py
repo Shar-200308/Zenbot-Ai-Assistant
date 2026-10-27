@@ -1,5 +1,8 @@
+import base64
 import functools
+import json
 import logging
+import os
 
 import firebase_admin
 from django.conf import settings
@@ -12,15 +15,53 @@ from .models import FirebaseUser
 
 logger = logging.getLogger(__name__)
 
+
 # ================= FIREBASE INIT =================
-if not firebase_admin._apps:
-    cred = credentials.Certificate(settings.FIREBASE_KEY_PATH)
-    firebase_admin.initialize_app(cred)
+def _init_firebase():
+    if firebase_admin._apps:
+        return True
+
+    # 1. Try environment variable (raw JSON string or base64 encoded)
+    raw_env = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "").strip()
+    if raw_env:
+        try:
+            if not raw_env.startswith("{"):
+                raw_env = base64.b64decode(raw_env).decode("utf-8")
+            data = json.loads(raw_env)
+            cred = credentials.Certificate(data)
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase Admin initialized from FIREBASE_SERVICE_ACCOUNT_JSON env var.")
+            return True
+        except Exception as e:
+            logger.error("Failed to parse FIREBASE_SERVICE_ACCOUNT_JSON: %s", e)
+
+    # 2. Try certificate file path from settings
+    key_path = getattr(settings, "FIREBASE_KEY_PATH", None)
+    if key_path and os.path.exists(key_path):
+        try:
+            cred = credentials.Certificate(str(key_path))
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase Admin initialized from certificate file.")
+            return True
+        except Exception as e:
+            logger.error("Failed to initialize Firebase from file: %s", e)
+
+    logger.warning(
+        "Firebase Admin is not configured. Set FIREBASE_SERVICE_ACCOUNT_JSON env var "
+        "or place firebase-service-account.json in the project root."
+    )
+    return False
+
+
+_init_firebase()
 
 
 # ================= VERIFY TOKEN =================
 def verify_firebase_token(request):
     logger.debug("Entering verify_firebase_token")
+    if not firebase_admin._apps and not _init_firebase():
+        logger.error("Firebase Admin SDK is not initialized. Cannot verify token.")
+        return None
     auth_header = request.headers.get("Authorization")
 
     if not auth_header:

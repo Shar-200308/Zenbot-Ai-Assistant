@@ -1,16 +1,25 @@
 import os
 
-from django.core.wsgi import get_wsgi_application
+from django.core.wsgi import get_wsgi_application as _get_django_wsgi_app
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Zenbot.settings')
 
-_django_app = get_wsgi_application()
+_raw_app = None
 
 
-def application(environ, start_response):
-    # Ensure X-Forwarded-Proto is reflected in wsgi.url_scheme for reverse proxies (Render, Cloudflare, etc.)
-    proto = environ.get('HTTP_X_FORWARDED_PROTO')
-    if proto:
-        environ['wsgi.url_scheme'] = proto.split(',')[0].strip()
-    return _django_app(environ, start_response)
+def get_wsgi_application():
+    global _raw_app
+    if _raw_app is None:
+        _raw_app = _get_django_wsgi_app()
+
+    def wrapped_app(environ, start_response):
+        proto = environ.get('HTTP_X_FORWARDED_PROTO')
+        if proto:
+            environ['wsgi.url_scheme'] = proto.split(',')[0].strip()
+        return _raw_app(environ, start_response)
+
+    return wrapped_app
+
+
+application = get_wsgi_application()
 
