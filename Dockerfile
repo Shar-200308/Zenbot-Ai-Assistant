@@ -44,8 +44,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy project files
 COPY . .
 
-# Collect static files (uses STATIC_ROOT = /app/staticfiles)
-RUN python manage.py collectstatic --noinput --settings=Zenbot.settings 2>/dev/null || true
+# Collect static files (uses STATIC_ROOT = /app/staticfiles for WhiteNoise)
+RUN python manage.py collectstatic --noinput
 
 # Create non-root user for security
 RUN addgroup --system zenbot && adduser --system --ingroup zenbot zenbot
