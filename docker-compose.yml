@@ -61,7 +61,7 @@ services:
       - ./logs:/app/logs            # Stream logs to host for debugging
     command: >
       sh -c "python manage.py migrate --noinput &&
-             python manage.py createcachetable --noinput 2>/dev/null || true &&
+             python manage.py createcachetable &&
              python -m waitress --port=8000 --call Zenbot.wsgi:get_wsgi_application"
 
   # ── Celery Worker (Background Tasks) ─────────────────────────────────────────

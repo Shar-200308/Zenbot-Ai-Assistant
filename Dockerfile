@@ -55,6 +55,6 @@ USER zenbot
 # Expose application port
 EXPOSE 8000
 
-# Run database migrations and seed jobs before starting production WSGI server
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py createcachetable --noinput 2>/dev/null || true && python manage.py seed_jobs 2>/dev/null || true && python -m waitress --port=8000 --call Zenbot.wsgi:get_wsgi_application"]
+# Run database migrations, create cache table, and seed jobs before starting production WSGI server
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py createcachetable && python manage.py seed_jobs && python -m waitress --port=8000 --call Zenbot.wsgi:get_wsgi_application"]
 
