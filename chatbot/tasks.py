@@ -244,9 +244,53 @@ def send_application_emails(app_id: int, app_type: str, accept_url: str = "", re
     except Exception as exc:
         logger.error("Failed sending candidate confirmation email: %s", exc)
 
-    # ── 2. HR Notification Email (Disabled) ──────────────────────────────────
-    # HR reviews applications and resumes directly in the HR Panel (/hr/)
-    logger.info("HR email notification omitted: HR accesses candidate details and resumes directly via HR Panel")
+    # ── 2. HR Notification Email ─────────────────────────────────────────────
+    hr_email = getattr(settings, 'HR_EMAIL', None)
+    if hr_email:
+        hr_subject = f"New {app_type.title()} Application: {app.full_name} for {app.role}"
+        action_buttons_html = ""
+        if accept_url and reject_url:
+            action_buttons_html = f"""
+            <div style="margin:22px 0;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
+                <p style="font-size:13px;font-weight:700;color:#2d3748;margin:0 0 10px 0;">⚡ Quick HR Action:</p>
+                <a href="{accept_url}" style="background:#10b981;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:600;font-size:13px;display:inline-block;">Accept & Schedule Interview</a>
+                &nbsp;&nbsp;
+                <a href="{reject_url}" style="background:#ef4444;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:600;font-size:13px;display:inline-block;">Reject Application</a>
+            </div>"""
+
+        hr_panel_url = f"{(getattr(settings, 'SITE_URL', '') or '').rstrip('/')}/hr/"
+        hr_html = f"""
+        <div style="font-family:'Segoe UI',Tahoma,sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;color:#1a202c;">
+            <div style="text-align:center;border-bottom:2px solid #3182ce;padding-bottom:15px;margin-bottom:20px;">
+                <h2 style="color:#2b6cb0;margin:0;font-size:20px;">{company_name} · HR Recruitment</h2>
+                <p style="color:#4a5568;margin:5px 0 0 0;font-size:14px;">New {app_type.title()} Application Received</p>
+            </div>
+            <p style="font-size:15px;">A new candidate application has been submitted:</p>
+            <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:13px;">
+                {table_rows_html}
+            </table>
+            {action_buttons_html}
+            <div style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:12px;font-size:12px;color:#718096;text-align:center;">
+                Access full candidate pipeline in the <a href="{hr_panel_url}" style="color:#3182ce;text-decoration:underline;font-weight:600;">HR Management Dashboard</a>.
+            </div>
+        </div>"""
+
+        try:
+            hr_msg = EmailMultiAlternatives(hr_subject, strip_tags(hr_html), settings.DEFAULT_FROM_EMAIL, [hr_email])
+            hr_msg.attach_alternative(hr_html, "text/html")
+            if getattr(app, 'resume', None):
+                try:
+                    from django.core.files.storage import default_storage
+                    if default_storage.exists(app.resume.name):
+                        with default_storage.open(app.resume.name, 'rb') as rf:
+                            hr_msg.attach(f"{app.full_name.replace(' ', '_')}_resume.pdf", rf.read(), 'application/pdf')
+                except Exception as att_err:
+                    logger.warning("Could not attach resume to HR email: %s", att_err)
+            hr_msg.send(fail_silently=False)
+            logger.info("HR notification email sent successfully to %s for app #%d", hr_email, app.id)
+        except Exception as exc:
+            logger.error("Failed sending HR notification email: %s", exc)
+
     return True
 
 
