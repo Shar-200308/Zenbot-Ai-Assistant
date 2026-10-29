@@ -273,6 +273,9 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "your-email@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "your-app-password")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", f"Zenbot Team <{EMAIL_HOST_USER}>")
 HR_EMAIL = os.getenv("HR_EMAIL", EMAIL_HOST_USER)
+# Control whether HR receives email notifications for every candidate submission.
+# Defaults to False: HR reviews all applications in the HR Management Dashboard (/hr/).
+SEND_HR_APPLICATION_NOTIFICATION = os.getenv("SEND_HR_APPLICATION_NOTIFICATION", "False").lower() in ("true", "1", "yes")
 
 # ================= COMPANY / BRANDING CONFIGURATION =================
 COMPANY_NAME = os.getenv("COMPANY_NAME", "Zensar Technologies")

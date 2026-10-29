@@ -244,20 +244,15 @@ def send_application_emails(app_id: int, app_type: str, accept_url: str = "", re
     except Exception as exc:
         logger.error("Failed sending candidate confirmation email: %s", exc)
 
-    # ── 2. HR Notification Email ─────────────────────────────────────────────
-    hr_email = getattr(settings, 'HR_EMAIL', None)
+    # ── 2. HR Notification Email (Disabled by Default) ───────────────────────
+    # Per workflow requirements: HR manages applications directly via the HR Management
+    # Dashboard (/hr/). Submission emails are not sent to HR unless explicitly configured.
+    # Quick action buttons in emails are removed to ensure actions are taken in Dashboard.
+    send_to_hr = getattr(settings, 'SEND_HR_APPLICATION_NOTIFICATION', False)
+    hr_email = getattr(settings, 'HR_EMAIL', None) if send_to_hr else None
+
     if hr_email:
         hr_subject = f"New {app_type.title()} Application: {app.full_name} for {app.role}"
-        action_buttons_html = ""
-        if accept_url and reject_url:
-            action_buttons_html = f"""
-            <div style="margin:22px 0;padding:16px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
-                <p style="font-size:13px;font-weight:700;color:#2d3748;margin:0 0 10px 0;">⚡ Quick HR Action:</p>
-                <a href="{accept_url}" style="background:#10b981;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:600;font-size:13px;display:inline-block;">Accept & Schedule Interview</a>
-                &nbsp;&nbsp;
-                <a href="{reject_url}" style="background:#ef4444;color:#ffffff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:600;font-size:13px;display:inline-block;">Reject Application</a>
-            </div>"""
-
         hr_panel_url = f"{(getattr(settings, 'SITE_URL', '') or '').rstrip('/')}/hr/"
         hr_html = f"""
         <div style="font-family:'Segoe UI',Tahoma,sans-serif;max-width:600px;margin:0 auto;padding:24px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;color:#1a202c;">
@@ -269,9 +264,8 @@ def send_application_emails(app_id: int, app_type: str, accept_url: str = "", re
             <table style="width:100%;border-collapse:collapse;margin:18px 0;font-size:13px;">
                 {table_rows_html}
             </table>
-            {action_buttons_html}
             <div style="margin-top:20px;border-top:1px solid #e2e8f0;padding-top:12px;font-size:12px;color:#718096;text-align:center;">
-                Access full candidate pipeline in the <a href="{hr_panel_url}" style="color:#3182ce;text-decoration:underline;font-weight:600;">HR Management Dashboard</a>.
+                Review and manage this applicant in the <a href="{hr_panel_url}" style="color:#3182ce;text-decoration:underline;font-weight:600;">HR Management Dashboard</a>.
             </div>
         </div>"""
 
@@ -290,6 +284,8 @@ def send_application_emails(app_id: int, app_type: str, accept_url: str = "", re
             logger.info("HR notification email sent successfully to %s for app #%d", hr_email, app.id)
         except Exception as exc:
             logger.error("Failed sending HR notification email: %s", exc)
+    else:
+        logger.info("HR notification email skipped (HR reviews applications in HR Dashboard) for app #%d", app.id)
 
     return True
 
